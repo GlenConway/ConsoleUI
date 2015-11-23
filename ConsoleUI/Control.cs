@@ -27,6 +27,7 @@ namespace ConsoleUI
         public Control()
         {
             Height = 1;
+            Visible = true;
         }
 
         public event EventHandler Enter;
@@ -66,7 +67,7 @@ namespace ConsoleUI
         {
             get
             {
-                return ClientLeft + ClientWidth-1;
+                return ClientLeft + ClientWidth - 1;
             }
         }
 
@@ -106,6 +107,7 @@ namespace ConsoleUI
 
         public int Top { get; set; }
 
+        public bool Visible { get; set; }
         public int Width { get; set; }
 
         protected int ClientHeight
@@ -150,6 +152,9 @@ namespace ConsoleUI
 
         public void Draw()
         {
+            if (!Visible)
+                return;
+
             DrawBorder();
             DrawControl();
         }
@@ -267,15 +272,15 @@ namespace ConsoleUI
                     }
             }
 
-            owner.Buffer.Write((short)(X + ClientLeft), (short)(Y + Top), text, ForegroundColor, BackgroundColor);
+            owner.Buffer.Write((short)(X + ClientLeft), (short)(Y + ClientTop), text, ForegroundColor, BackgroundColor);
 
-            X += text.Length;
+            //X += text.Length;
 
-            if (X > ClientWidth)
-            {
-                X = 0;
-                Y++;
-            }
+            //if (X > ClientWidth)
+            //{
+            //    X = 0;
+            //    Y++;
+            //}
         }
 
         private void DrawDoubleBorder()
@@ -297,7 +302,7 @@ namespace ConsoleUI
                 owner.Buffer.Write((short)Right, (short)i, DoubleBorderVertical, ForegroundColor, BackgroundColor);
             }
 
-            Y++;
+            
         }
 
         private void DrawSingleBorder()
@@ -319,7 +324,7 @@ namespace ConsoleUI
                 owner.Buffer.Write((short)Right, (short)i, SingleBorderVertical, ForegroundColor, BackgroundColor);
             }
 
-            Y++;
+            
         }
     }
 }

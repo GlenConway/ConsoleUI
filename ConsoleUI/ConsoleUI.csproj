@@ -44,6 +44,7 @@
     <Compile Include="Buffer.cs" />
     <Compile Include="Control.cs" />
     <Compile Include="ListBox.cs" />
+    <Compile Include="KeyPressedEventArgs.cs" />
     <Compile Include="ScreenCollection.cs" />
     <Compile Include="ControlCollection.cs" />
     <Compile Include="IControlContainer.cs" />

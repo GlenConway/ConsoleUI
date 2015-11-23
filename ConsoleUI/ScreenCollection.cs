@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace ConsoleUI
@@ -24,6 +23,14 @@ namespace ConsoleUI
             }
         }
 
+        public virtual Screen this[int index]
+        {
+            get
+            {
+                return list[index];
+            }
+        }
+
         public void Add(Screen item)
         {
             list.Add(item);
@@ -31,7 +38,7 @@ namespace ConsoleUI
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            list.Clear();
         }
 
         public bool Contains(Screen item)
@@ -62,14 +69,6 @@ namespace ConsoleUI
         public void Show(int index)
         {
             this[index].Show();
-        }
-
-        public virtual Screen this[int index]
-        {
-            get
-            {
-                return list[index];
-            }
         }
     }
 }

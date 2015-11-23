@@ -26,6 +26,7 @@ namespace ConsoleUI
 
             controls.Repaint += (s, e) =>
             {
+                Draw();
                 Paint();
             };
         }

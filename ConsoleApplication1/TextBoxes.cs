@@ -17,7 +17,7 @@ namespace ConsoleApplication1
 
             var control1 = new TextBox();
 
-            control1.Left = 0;
+            control1.Left = 10;
             control1.Top = 0;
             control1.MaxLength = 5;
             control1.Width = control1.MaxLength;
@@ -51,7 +51,7 @@ namespace ConsoleApplication1
 
             var control1 = new TextBox();
 
-            control1.Left = 0;
+            control1.Left = 10;
             control1.Top = 0;
             control1.MaxLength = 6;
             control1.Width = control1.MaxLength + 2;
@@ -87,7 +87,7 @@ namespace ConsoleApplication1
 
             var control1 = new TextBox();
 
-            control1.Left = 0;
+            control1.Left = 10;
             control1.Top = 0;
             control1.MaxLength = 5;
             control1.Width = control1.MaxLength;

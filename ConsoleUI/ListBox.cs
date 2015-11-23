@@ -25,6 +25,8 @@ namespace ConsoleUI
             TabStop = true;
         }
 
+        public event EventHandler<KeyPressedEventArgs> KeyPressed;
+
         public event EventHandler Selected;
 
         public IList<string> Items
@@ -46,6 +48,20 @@ namespace ConsoleUI
             }
         }
 
+        public virtual bool OnKeyPressed(ConsoleKeyInfo info)
+        {
+            if (KeyPressed != null)
+            {
+                var args = new KeyPressedEventArgs(info);
+
+                KeyPressed(this, args);
+
+                return args.Handled;
+            }
+
+            return false;
+        }
+
         protected override void DrawControl()
         {
             var maxRows = ClientHeight;
@@ -62,7 +78,7 @@ namespace ConsoleUI
                 endIndex = CurrentIndex + 1;
             }
 
-            var y = Y;
+            var y = 0;
 
             for (int i = startIndex; i < endIndex; i++)
             {
@@ -70,31 +86,29 @@ namespace ConsoleUI
                 label.Owner = Owner;
                 label.Width = ClientWidth;
                 label.Left = ClientLeft;
-                label.Top = Top + Y;
+                label.Top = ClientTop + y;
 
                 label.BackgroundColor = i == CurrentIndex ? (HasFocus ? SelectedBackgroundColor : SelectedNoFocusBackgroundColor) : BackgroundColor;
                 label.ForegroundColor = i == CurrentIndex ? (HasFocus ? SelectedForegroundColor : SelectedNoFocusForegroundColor) : ForegroundColor;
 
                 label.Draw();
 
-                Y++;
+                y++;
             }
 
-            for (int i = Y; i <= ClientHeight; i++)
+            for (int i = y; i < ClientHeight; i++)
             {
                 var label = new Label();
                 label.Owner = Owner;
                 label.Width = ClientWidth;
                 label.Left = ClientLeft;
-                label.Top = Top + i;
+                label.Top = ClientTop + i;
 
                 label.BackgroundColor = BackgroundColor;
                 label.ForegroundColor = ForegroundColor;
 
                 label.Draw();
             }
-
-            Y = y;
 
             DrawVerticalScrollBar();
         }
@@ -149,6 +163,9 @@ namespace ConsoleUI
             while (true)
             {
                 ConsoleKeyInfo info = Console.ReadKey(true);
+
+                if (OnKeyPressed(info))
+                    continue;
 
                 switch (info.Key)
                 {

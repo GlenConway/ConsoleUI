@@ -7,9 +7,27 @@ namespace ConsoleUI
         public TextBox()
         {
             TabStop = true;
+            Width = 5;
+            Height = 1;
         }
 
+        public event EventHandler<KeyPressedEventArgs> KeyPressed;
+
         public int MaxLength { get; set; }
+
+        public virtual bool OnKeyPressed(ConsoleKeyInfo info)
+        {
+            if (KeyPressed != null)
+            {
+                var args = new KeyPressedEventArgs(info);
+
+                KeyPressed(this, args);
+
+                return args.Handled;
+            }
+
+            return false;
+        }
 
         protected override void OnEnter()
         {
@@ -17,15 +35,12 @@ namespace ConsoleUI
             Console.BackgroundColor = BackgroundColor;
 
             base.OnEnter();
+            
+            Console.CursorLeft = ClientLeft;
+            Console.CursorTop = ClientTop;
 
             if (!string.IsNullOrEmpty(Text))
-                Console.CursorLeft = Text.Length;
-
-            if (BorderStyle != BorderStyle.None)
-            {
-                Console.CursorTop = Console.CursorTop + 1;
-                Console.CursorLeft = Console.CursorLeft + 1;
-            }
+                Console.CursorLeft += Text.Length;
 
             ReadKey();
         }
@@ -35,6 +50,9 @@ namespace ConsoleUI
             while (true)
             {
                 ConsoleKeyInfo info = Console.ReadKey(true);
+
+                if (OnKeyPressed(info))
+                    continue;
 
                 switch (info.Key)
                 {
@@ -112,11 +130,8 @@ namespace ConsoleUI
                         }
                     default:
                         {
-                            int pos = Console.CursorLeft;
-
-                            if (BorderStyle != BorderStyle.None)
-                                pos--;
-
+                            int pos = Console.CursorLeft - ClientLeft;
+                            
                             if (Text == null || ((pos < ClientWidth & pos < MaxLength) || (pos < ClientWidth & MaxLength == 0)))
                             {
                                 Console.Write(info.KeyChar);

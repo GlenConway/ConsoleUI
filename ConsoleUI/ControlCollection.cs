@@ -105,7 +105,7 @@ namespace ConsoleUI
 
         public void SetFocus()
         {
-            var control = list.OrderBy(p => p.TabOrder).Where(p => p.TabStop).Where(p => p.TabOrder >= tabOrder).FirstOrDefault();
+            var control = list.OrderBy(p => p.TabOrder).Where(p => p.TabStop).Where(p => p.Visible).Where(p => p.TabOrder >= tabOrder).FirstOrDefault();
 
             if (control == null)
                 return;
@@ -121,7 +121,7 @@ namespace ConsoleUI
 
         private Control LastControl()
         {
-            return list.OrderBy(p => p.TabOrder).LastOrDefault();
+            return list.OrderBy(p => p.TabOrder).Where(p => p.Visible).LastOrDefault();
         }
     }
 }

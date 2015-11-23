@@ -9,9 +9,10 @@ namespace ConsoleApplication1
 
         static void Main(string[] args)
         {
-            Labels.SetupLabelScreens(screens);
+            //Labels.SetupLabelScreens(screens);
             TextBoxes.SetupTextBoxScreens(screens);
-            ListBoxes.SetupListBoxScreens(screens);
+            //ListBoxes.SetupListBoxScreens(screens);
+            KeyPressedEvents.SetupListBoxScreens(screens);
 
             ShowScreens();
         }
