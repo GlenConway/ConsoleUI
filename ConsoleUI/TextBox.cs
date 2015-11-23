@@ -15,6 +15,14 @@ namespace ConsoleUI
 
         public int MaxLength { get; set; }
 
+        private int Position
+        {
+            get
+            {
+                return Console.CursorLeft - ClientLeft;
+            }
+        }
+
         public virtual bool OnKeyPressed(ConsoleKeyInfo info)
         {
             if (KeyPressed != null)
@@ -35,7 +43,7 @@ namespace ConsoleUI
             Console.BackgroundColor = BackgroundColor;
 
             base.OnEnter();
-            
+
             Console.CursorLeft = ClientLeft;
             Console.CursorTop = ClientTop;
 
@@ -84,12 +92,9 @@ namespace ConsoleUI
                         {
                             if (!string.IsNullOrEmpty(Text))
                             {
-                                // get the location of the cursor
-                                int pos = Console.CursorLeft;
-
-                                if (pos > 0)
+                                if (Position > 0)
                                     // move the cursor to the left by one character
-                                    Console.SetCursorPosition(pos - 1, Console.CursorTop);
+                                    Console.SetCursorPosition(Position - 1, Console.CursorTop);
                             }
 
                             break;
@@ -98,12 +103,9 @@ namespace ConsoleUI
                         {
                             if (!string.IsNullOrEmpty(Text))
                             {
-                                // get the location of the cursor
-                                int pos = Console.CursorLeft;
-
-                                if (pos < Text.Length)
+                                if (Position < Text.Length)
                                     // move the cursor to the right by one character
-                                    Console.SetCursorPosition(pos + 1, Console.CursorTop);
+                                    Console.SetCursorPosition(Position + 1, Console.CursorTop);
                             }
 
                             break;
@@ -112,34 +114,32 @@ namespace ConsoleUI
                         {
                             if (!string.IsNullOrEmpty(Text))
                             {
-                                // get the location of the cursor
-                                int pos = Console.CursorLeft;
-
                                 // remove one character from the list of characters
                                 Text = Text.Substring(0, Text.Length - 1);
 
                                 // move the cursor to the left by one character
-                                Console.SetCursorPosition(pos - 1, Console.CursorTop);
+                                Console.SetCursorPosition(Position - 1 + ClientLeft, Console.CursorTop);
                                 // replace it with space
                                 Console.Write(" ");
                                 // move the cursor to the left by one character again
-                                Console.SetCursorPosition(pos - 1, Console.CursorTop);
+                                Console.SetCursorPosition(Position - 1 + ClientLeft, Console.CursorTop);
                             }
 
                             break;
                         }
                     default:
                         {
-                            int pos = Console.CursorLeft - ClientLeft;
-                            
-                            if (Text == null || ((pos < ClientWidth & pos < MaxLength) || (pos < ClientWidth & MaxLength == 0)))
-                            {
-                                Console.Write(info.KeyChar);
+                            if (char.IsControl(info.KeyChar))
+                                break;
 
-                                if (Text == null || pos == Text.Length)
+                            if (Text == null || ((Position < ClientWidth & Position < MaxLength) || (Position < ClientWidth & MaxLength == 0)))
+                            {
+                                if (Text == null || Position == Text.Length)
                                     Text += info.KeyChar;
                                 else
-                                    Text = Text.Insert(pos, info.KeyChar.ToString());
+                                    Text = Text.Insert(Position, info.KeyChar.ToString());
+
+                                Console.Write(info.KeyChar);
                             }
 
                             break;
