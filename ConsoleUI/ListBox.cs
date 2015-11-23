@@ -40,6 +40,23 @@ namespace ConsoleUI
             }
         }
 
+        public string SelectedItem
+        {
+            get
+            {
+                if (SelectedIndex < 0)
+                    return string.Empty;
+
+                if (Items.Count == 0)
+                    return string.Empty;
+
+                if (SelectedIndex > Items.Count)
+                    return string.Empty;
+
+                return Items[SelectedIndex];
+            }
+        }
+
         protected double ScrollBarPercent
         {
             get

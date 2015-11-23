@@ -42,6 +42,20 @@ namespace ConsoleApplication1
             screen.Footer.Text = screen.Name + ". Press C to popup a text box, enter or escape.";
 
             screens.Add(screen);
+
+            control1.KeyPressed += (s, e) =>
+            {
+                if (e.Info.Key == System.ConsoleKey.C)
+                {
+                    textBox.Visible = true;
+                    textBox.Focus();
+                }
+            };
+
+            control1.Selected += (s, e) =>
+            {
+                screen.Footer.Text = control1.SelectedItem;
+            };
         }
     }
 }

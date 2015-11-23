@@ -24,6 +24,8 @@ namespace ConsoleUI
         private byte SingleBorderTopRight = 191;
         private byte SingleBorderVertical = 179;
 
+        private bool visible;
+
         public Control()
         {
             Height = 1;
@@ -107,7 +109,20 @@ namespace ConsoleUI
 
         public int Top { get; set; }
 
-        public bool Visible { get; set; }
+        public bool Visible
+        {
+            get
+            {
+                return visible;
+            }
+            set
+            {
+                visible = value;
+
+                OnRepaint();
+            }
+        }
+
         public int Width { get; set; }
 
         protected int ClientHeight
@@ -301,8 +316,6 @@ namespace ConsoleUI
                 owner.Buffer.Write((short)Left, (short)i, DoubleBorderVertical, ForegroundColor, BackgroundColor);
                 owner.Buffer.Write((short)Right, (short)i, DoubleBorderVertical, ForegroundColor, BackgroundColor);
             }
-
-            
         }
 
         private void DrawSingleBorder()
@@ -323,8 +336,6 @@ namespace ConsoleUI
                 owner.Buffer.Write((short)Left, (short)i, SingleBorderVertical, ForegroundColor, BackgroundColor);
                 owner.Buffer.Write((short)Right, (short)i, SingleBorderVertical, ForegroundColor, BackgroundColor);
             }
-
-            
         }
     }
 }
