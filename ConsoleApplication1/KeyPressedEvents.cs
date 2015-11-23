@@ -56,6 +56,11 @@ namespace ConsoleApplication1
             {
                 screen.Footer.Text = control1.SelectedItem;
             };
+
+            textBox.Leave += (s, e) =>
+            {
+                screen.Footer.Text = textBox.Text;
+            };
         }
     }
 }
