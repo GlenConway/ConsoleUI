@@ -69,11 +69,15 @@ namespace ConsoleUI
 
             if (TextChanged != null)
                 TextChanged(this, new TextChangedEventArgs(originalText, Text));
+
+            OnRepaint();
+
+            originalText = Text;
         }
 
         private void ReadKey()
         {
-            while (true)
+            while (HasFocus)
             {
                 ConsoleKeyInfo info = Console.ReadKey(true);
 
@@ -103,7 +107,7 @@ namespace ConsoleUI
                     case ConsoleKey.Enter:
                         {
                             OnTextChanged();
-                            
+
                             if (TreatEnterKeyAsTab)
                             {
                                 Blur();
@@ -112,7 +116,7 @@ namespace ConsoleUI
 
                                 return;
                             }
-                            
+
                             break;
                         }
                     case ConsoleKey.LeftArrow:

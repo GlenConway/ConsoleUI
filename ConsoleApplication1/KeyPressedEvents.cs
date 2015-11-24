@@ -63,6 +63,11 @@ namespace ConsoleApplication1
             {
                 screen.Footer.Text = string.Format("{0} => {1}", e.OrignalText ?? string.Empty, e.NewText);
             };
+
+            textBox.Leave += (s, e) =>
+            {
+                screen.Exit();
+            };
         }
     }
 }

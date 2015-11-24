@@ -10,6 +10,7 @@ namespace ConsoleUI
         private readonly IControlContainer owner;
         private IList<Control> list = new List<Control>();
         private int tabOrder = 0;
+        private bool exit;
 
         public ControlCollection(IControlContainer owner)
         {
@@ -67,14 +68,6 @@ namespace ConsoleUI
                         tabOrder = control.TabOrder;
                 }
             };
-
-            //item.Leave += (s, e) =>
-            //{
-            //    foreach (var control in list)
-            //    {
-            //        control.HasFocus = false;
-            //    }
-            //};
         }
 
         public void Clear()
@@ -112,8 +105,23 @@ namespace ConsoleUI
             return list.Remove(item);
         }
 
-        public void SetFocus()
+        internal void Exit()
         {
+            exit = true;
+
+            foreach (var item in list.Where(p => p.HasFocus))
+            {
+                item.HasFocus = false;
+            }
+
+            tabOrder = 0;
+        }
+
+        internal void SetFocus()
+        {
+            if (exit)
+                return;
+
             var control = list.OrderBy(p => p.TabOrder).Where(p => p.TabStop).Where(p => p.Visible).Where(p => p.TabOrder >= tabOrder).FirstOrDefault();
 
             if (control == null)
@@ -135,6 +143,9 @@ namespace ConsoleUI
 
         private void TabToNextControl(bool shift)
         {
+            if (exit)
+                return;
+
             if (list.Where(p => p.TabStop).Where(p => p.Visible).Count() == 1)
                 return;
 

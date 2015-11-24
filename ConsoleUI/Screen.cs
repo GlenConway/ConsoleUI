@@ -21,8 +21,10 @@ namespace ConsoleUI
 
             Name = name;
 
-            Console.BufferHeight = height;
-            Console.BufferWidth = width;
+            Console.WindowHeight = height;
+            Console.WindowWidth = width;
+            Console.BufferHeight = Console.WindowHeight;
+            Console.BufferWidth = Console.WindowWidth;
 
             buffer = new Buffer(0, 0, height, width);
             controls = new ControlCollection(this);
@@ -100,6 +102,11 @@ namespace ConsoleUI
             Paint();
 
             Controls.SetFocus();
+        }
+
+        public void Exit()
+        {
+            Controls.Exit();
         }
 
         protected void Draw()
