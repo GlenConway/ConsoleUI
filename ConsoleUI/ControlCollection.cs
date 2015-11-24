@@ -56,11 +56,30 @@ namespace ConsoleUI
             {
                 OnRepaint();
             };
+
+            item.Enter += (s, e) =>
+            {
+                foreach (var control in list)
+                {
+                    control.HasFocus = control == s;
+
+                    if (control == s)
+                        tabOrder = control.TabOrder;
+                }
+            };
+
+            //item.Leave += (s, e) =>
+            //{
+            //    foreach (var control in list)
+            //    {
+            //        control.HasFocus = false;
+            //    }
+            //};
         }
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            list.Clear();
         }
 
         public bool Contains(Control item)
@@ -76,6 +95,11 @@ namespace ConsoleUI
         public IEnumerator<Control> GetEnumerator()
         {
             return list.GetEnumerator();
+        }
+
+        public Control HasFocus()
+        {
+            return list.Where(p => p.HasFocus).LastOrDefault();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

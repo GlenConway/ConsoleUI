@@ -4,7 +4,6 @@ namespace ConsoleUI
 {
     public class KeyPressedEventArgs : EventArgs
     {
-        private bool handled;
         private ConsoleKeyInfo info;
 
         public KeyPressedEventArgs(ConsoleKeyInfo info)
@@ -14,10 +13,8 @@ namespace ConsoleUI
 
         public bool Handled
         {
-            get
-            {
-                return handled;
-            }
+            get;
+            set;
         }
 
         public ConsoleKeyInfo Info

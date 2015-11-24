@@ -21,6 +21,7 @@ namespace ConsoleApplication1
             control1.Top = 0;
             control1.MaxLength = 5;
             control1.Width = control1.MaxLength;
+            control1.TreatEnterKeyAsTab = false;
 
             var control2 = new TextBox();
 

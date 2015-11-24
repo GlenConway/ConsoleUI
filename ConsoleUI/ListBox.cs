@@ -177,7 +177,7 @@ namespace ConsoleUI
 
         private void ReadKey()
         {
-            while (true)
+            while (HasFocus)
             {
                 ConsoleKeyInfo info = Console.ReadKey(true);
 

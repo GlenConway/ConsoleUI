@@ -36,6 +36,7 @@ namespace ConsoleApplication1
             textBox.MaxLength = 6;
             textBox.BackgroundColor = System.ConsoleColor.DarkGreen;
             textBox.Visible = false;
+            textBox.TreatEnterKeyAsTab = false;
 
             screen.Controls.Add(textBox);
 
@@ -49,6 +50,7 @@ namespace ConsoleApplication1
                 {
                     textBox.Visible = true;
                     textBox.Focus();
+                    e.Handled = true;
                 }
             };
 
@@ -59,7 +61,7 @@ namespace ConsoleApplication1
 
             textBox.TextChanged += (s, e) =>
             {
-                screen.Footer.Text = string.Format("{0} => {1}", e.OrignalText, e.NewText);
+                screen.Footer.Text = string.Format("{0} => {1}", e.OrignalText ?? string.Empty, e.NewText);
             };
         }
     }

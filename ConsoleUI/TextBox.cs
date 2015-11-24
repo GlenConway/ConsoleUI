@@ -11,12 +11,16 @@ namespace ConsoleUI
             TabStop = true;
             Width = 5;
             Height = 1;
+            TreatEnterKeyAsTab = true;
         }
 
         public event EventHandler<KeyPressedEventArgs> KeyPressed;
+
         public event EventHandler<TextChangedEventArgs> TextChanged;
 
         public int MaxLength { get; set; }
+
+        public bool TreatEnterKeyAsTab { get; set; }
 
         private int Position
         {
@@ -24,30 +28,6 @@ namespace ConsoleUI
             {
                 return Console.CursorLeft - ClientLeft;
             }
-        }
-
-        protected virtual bool OnKeyPressed(ConsoleKeyInfo info)
-        {
-            if (KeyPressed != null)
-            {
-                var args = new KeyPressedEventArgs(info);
-
-                KeyPressed(this, args);
-
-                return args.Handled;
-            }
-
-            return false;
-        }
-
-
-        protected virtual void OnTextChanged()
-        {
-            if (originalText == Text)
-                return;
-
-            if (TextChanged != null)
-                TextChanged(this, new TextChangedEventArgs(originalText, Text));
         }
 
         protected override void OnEnter()
@@ -66,6 +46,29 @@ namespace ConsoleUI
             originalText = Text;
 
             ReadKey();
+        }
+
+        protected virtual bool OnKeyPressed(ConsoleKeyInfo info)
+        {
+            if (KeyPressed != null)
+            {
+                var args = new KeyPressedEventArgs(info);
+
+                KeyPressed(this, args);
+
+                return args.Handled;
+            }
+
+            return false;
+        }
+
+        protected virtual void OnTextChanged()
+        {
+            if (originalText == Text)
+                return;
+
+            if (TextChanged != null)
+                TextChanged(this, new TextChangedEventArgs(originalText, Text));
         }
 
         private void ReadKey()
@@ -100,12 +103,17 @@ namespace ConsoleUI
                     case ConsoleKey.Enter:
                         {
                             OnTextChanged();
+                            
+                            if (TreatEnterKeyAsTab)
+                            {
+                                Blur();
 
-                            Blur();
+                                OnTabPressed(false);
 
-                            OnTabPressed(false);
-
-                            return;
+                                return;
+                            }
+                            
+                            break;
                         }
                     case ConsoleKey.LeftArrow:
                         {
