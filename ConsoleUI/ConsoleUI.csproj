@@ -55,6 +55,7 @@
     <Compile Include="TabEventArgs.cs" />
     <Compile Include="TextAlign.cs" />
     <Compile Include="TextBox.cs" />
+    <Compile Include="TextBoxType.cs" />
     <Compile Include="TextChangedEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

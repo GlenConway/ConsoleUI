@@ -35,7 +35,8 @@ namespace ConsoleApplication1
             control3.Left = 0;
             control3.Top = control2.Top + control2.Height;
             control3.MaxLength = 20;
-            control3.Width = control3.MaxLength; ;
+            control3.Width = control3.MaxLength;
+            control3.TextBoxType = TextBoxType.Password;
 
             screen.Controls.Add(control1);
             screen.Controls.Add(control2);

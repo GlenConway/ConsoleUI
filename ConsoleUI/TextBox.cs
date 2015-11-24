@@ -4,6 +4,7 @@ namespace ConsoleUI
 {
     public class TextBox : Control
     {
+        public string PasswordCharacter = "*";
         private string originalText;
 
         public TextBox()
@@ -19,7 +20,7 @@ namespace ConsoleUI
         public event EventHandler<TextChangedEventArgs> TextChanged;
 
         public int MaxLength { get; set; }
-
+        public TextBoxType TextBoxType { get; set; }
         public bool TreatEnterKeyAsTab { get; set; }
 
         private int Position
@@ -28,6 +29,18 @@ namespace ConsoleUI
             {
                 return Console.CursorLeft - ClientLeft;
             }
+        }
+
+        protected override void DrawText()
+        {
+            if (Text == null || TextBoxType == TextBoxType.Standard)
+            {
+                base.DrawText();
+
+                return;
+            }
+
+            Write(new string(PasswordCharacter.ToCharArray(), 0, Text.Length));
         }
 
         protected override void OnEnter()
@@ -170,7 +183,10 @@ namespace ConsoleUI
                                 else
                                     Text = Text.Insert(Position, info.KeyChar.ToString());
 
-                                Console.Write(info.KeyChar);
+                                if (TextBoxType == TextBoxType.Password)
+                                    Console.Write(PasswordCharacter);
+                                else
+                                    Console.Write(info.KeyChar);
                             }
 
                             break;
