@@ -55,6 +55,7 @@
     <Compile Include="TabEventArgs.cs" />
     <Compile Include="TextAlign.cs" />
     <Compile Include="TextBox.cs" />
+    <Compile Include="TextChangedEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

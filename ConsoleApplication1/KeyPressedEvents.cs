@@ -57,9 +57,9 @@ namespace ConsoleApplication1
                 screen.Footer.Text = control1.SelectedItem;
             };
 
-            textBox.Leave += (s, e) =>
+            textBox.TextChanged += (s, e) =>
             {
-                screen.Footer.Text = textBox.Text;
+                screen.Footer.Text = string.Format("{0} => {1}", e.OrignalText, e.NewText);
             };
         }
     }

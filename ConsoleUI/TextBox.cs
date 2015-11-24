@@ -4,6 +4,8 @@ namespace ConsoleUI
 {
     public class TextBox : Control
     {
+        private string originalText;
+
         public TextBox()
         {
             TabStop = true;
@@ -12,6 +14,7 @@ namespace ConsoleUI
         }
 
         public event EventHandler<KeyPressedEventArgs> KeyPressed;
+        public event EventHandler<TextChangedEventArgs> TextChanged;
 
         public int MaxLength { get; set; }
 
@@ -23,7 +26,7 @@ namespace ConsoleUI
             }
         }
 
-        public virtual bool OnKeyPressed(ConsoleKeyInfo info)
+        protected virtual bool OnKeyPressed(ConsoleKeyInfo info)
         {
             if (KeyPressed != null)
             {
@@ -35,6 +38,16 @@ namespace ConsoleUI
             }
 
             return false;
+        }
+
+
+        protected virtual void OnTextChanged()
+        {
+            if (originalText == Text)
+                return;
+
+            if (TextChanged != null)
+                TextChanged(this, new TextChangedEventArgs(originalText, Text));
         }
 
         protected override void OnEnter()
@@ -49,6 +62,8 @@ namespace ConsoleUI
 
             if (!string.IsNullOrEmpty(Text))
                 Console.CursorLeft += Text.Length;
+
+            originalText = Text;
 
             ReadKey();
         }
@@ -74,6 +89,8 @@ namespace ConsoleUI
                         }
                     case ConsoleKey.Tab:
                         {
+                            OnTextChanged();
+
                             Blur();
 
                             OnTabPressed(info.Modifiers.HasFlag(ConsoleModifiers.Shift));
@@ -82,6 +99,8 @@ namespace ConsoleUI
                         }
                     case ConsoleKey.Enter:
                         {
+                            OnTextChanged();
+
                             Blur();
 
                             OnTabPressed(false);
