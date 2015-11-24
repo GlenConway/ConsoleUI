@@ -49,22 +49,7 @@ namespace ConsoleUI
 
             item.TabPressed += (s, e) =>
             {
-                var last = LastControl();
-
-                if (last == null)
-                    return;
-
-                var lastTabOrder = last.TabOrder;
-
-                if (e.Shift && tabOrder > 0)
-                    tabOrder--;
-                else
-                if (tabOrder < lastTabOrder)
-                    tabOrder++;
-                else
-                    tabOrder = 0;
-
-                SetFocus();
+                TabToNextControl(e.Shift);
             };
 
             item.Repaint += (s, e) =>
@@ -122,6 +107,29 @@ namespace ConsoleUI
         private Control LastControl()
         {
             return list.OrderBy(p => p.TabOrder).Where(p => p.Visible).LastOrDefault();
+        }
+
+        private void TabToNextControl(bool shift)
+        {
+            if (list.Where(p => p.TabStop).Where(p => p.Visible).Count() == 1)
+                return;
+
+            var last = LastControl();
+
+            if (last == null)
+                return;
+
+            var lastTabOrder = last.TabOrder;
+
+            if (shift && tabOrder > 0)
+                tabOrder--;
+            else
+            if (tabOrder < lastTabOrder)
+                tabOrder++;
+            else
+                tabOrder = 0;
+
+            SetFocus();
         }
     }
 }

@@ -9,6 +9,11 @@ namespace ConsoleApplication1
 
         static void Main(string[] args)
         {
+            Console.WindowHeight = 40;
+            Console.WindowWidth = 132;
+            Console.BufferHeight = Console.WindowHeight;
+            Console.BufferWidth = Console.WindowWidth;
+
             //Labels.SetupLabelScreens(screens);
             TextBoxes.SetupTextBoxScreens(screens);
             //ListBoxes.SetupListBoxScreens(screens);

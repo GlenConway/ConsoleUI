@@ -21,6 +21,9 @@ namespace ConsoleUI
 
             Name = name;
 
+            Console.BufferHeight = height;
+            Console.BufferWidth = width;
+
             buffer = new Buffer(0, 0, height, width);
             controls = new ControlCollection(this);
 
