@@ -20,12 +20,9 @@ namespace ConsoleApplication1
             screen.Login += Screen_Login;
         }
 
-        private static void Screen_Login(object sender, System.EventArgs e)
+        private static void Screen_Login(object sender, LoginEventArgs e)
         {
-            var loginScreen = sender as ConsoleUI.LoginScreen;
-
-            if (loginScreen.Username != "admin" & loginScreen.Password != "admin")
-                loginScreen.Show();
+            e.Success = (e.Username == "admin" & e.Password == "admin");
         }
     }
 }

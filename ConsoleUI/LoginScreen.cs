@@ -29,12 +29,12 @@ namespace ConsoleUI
             cancelButton.EscPressed += CancelButton_Click;
             loginButton.EscPressed += CancelButton_Click;
             usernameTextBox.EscPressed += CancelButton_Click;
-            usernameTextBox.EscPressed += CancelButton_Click;
+            passwordTextBox.EscPressed += CancelButton_Click;
         }
 
         public event EventHandler Cancelled;
 
-        public event EventHandler Login;
+        public event EventHandler<LoginEventArgs> Login;
 
         public string Password
         {
@@ -66,10 +66,10 @@ namespace ConsoleUI
                 Cancelled(this, new EventArgs());
         }
 
-        protected virtual void OnLogin()
+        protected virtual void OnLogin(LoginEventArgs args)
         {
             if (Login != null)
-                Login(this, new EventArgs());
+                Login(this, args);
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
@@ -79,13 +79,18 @@ namespace ConsoleUI
 
         private void LoginButton_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(usernameTextBox.Text))
+            if (!string.IsNullOrWhiteSpace(usernameTextBox.Text))
             {
-                loginButton.Draw();
-                usernameTextBox.Focus();
+                var args = new LoginEventArgs(Username, Password);
+
+                OnLogin(args);
+
+                if (args.Success)
+                    return;
             }
-            else
-                OnLogin();
+
+            loginButton.Draw();
+            usernameTextBox.Focus();
         }
 
         private void SetupControls()

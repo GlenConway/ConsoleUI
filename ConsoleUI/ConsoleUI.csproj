@@ -46,6 +46,7 @@
     <Compile Include="Control.cs" />
     <Compile Include="ListBox.cs" />
     <Compile Include="KeyPressedEventArgs.cs" />
+    <Compile Include="LoginEventArgs.cs" />
     <Compile Include="LoginScreen.cs" />
     <Compile Include="Rectangle.cs" />
     <Compile Include="ScreenCollection.cs" />
