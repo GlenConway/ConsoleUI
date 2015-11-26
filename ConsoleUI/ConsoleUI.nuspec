@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/GlenConway/ConsoleUI</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Added an Exit() method to the Screen class.</releaseNotes>
+    <releaseNotes>Better Login event handling.</releaseNotes>
     <copyright>Copyright 2015 Glen Conway</copyright>
     <tags>Console UI DOS Legacy</tags>
   </metadata>
