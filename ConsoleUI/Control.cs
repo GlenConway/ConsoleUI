@@ -7,6 +7,7 @@ namespace ConsoleUI
         public ConsoleColor BackgroundColor = ConsoleColor.Blue;
 
         public ConsoleColor ForegroundColor = ConsoleColor.Gray;
+        public bool HasShadow = false;
         protected int X;
         protected int Y;
         private BorderStyle borderStyle;
@@ -167,6 +168,7 @@ namespace ConsoleUI
 
             DrawBorder();
             DrawControl();
+            DrawShadow();
         }
 
         protected virtual void DrawBorder()
@@ -186,6 +188,22 @@ namespace ConsoleUI
             DrawText();
         }
 
+        protected virtual void DrawShadow()
+        {
+            if (!HasShadow)
+                return;
+
+            for (int i = Left + 1; i <= Right + 1; i++)
+            {
+                Owner.Buffer.Write((short)i, (short)Bottom + 1, 219, System.ConsoleColor.Black, System.ConsoleColor.DarkGray);
+            }
+
+            for (int i = Top + 1; i <= Bottom; i++)
+            {
+                Owner.Buffer.Write((short)Right + 1, (short)i, 219, System.ConsoleColor.Black, System.ConsoleColor.DarkGray);
+            }
+        }
+
         protected virtual void DrawText()
         {
             Write(Text);
@@ -195,6 +213,11 @@ namespace ConsoleUI
         {
             if (Repaint != null)
                 Repaint(this, new EventArgs());
+        }
+
+        protected virtual void OnWrite(int x, int y, string text, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
+        {
+            owner.Buffer.Write((short)x, (short)y, text, foregroundColor, backgroundColor);
         }
 
         protected void Write(string text)
@@ -248,10 +271,6 @@ namespace ConsoleUI
             //}
         }
 
-        protected virtual void OnWrite(int x, int y, string text, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
-        {
-            owner.Buffer.Write((short)x, (short)y, text, foregroundColor, backgroundColor);
-        }
         private void DrawDoubleBorder()
         {
             owner.Buffer.Write((short)Left, (short)Top, DoubleBorderTopLeft, ForegroundColor, BackgroundColor);

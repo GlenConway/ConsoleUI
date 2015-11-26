@@ -13,7 +13,19 @@ namespace ConsoleApplication1
         {
             var screen = new ConsoleUI.LoginScreen();
 
+            screen.Footer.Text = "Try admin admin.";
+
             screens.Add(screen);
+
+            screen.Login += Screen_Login;
+        }
+
+        private static void Screen_Login(object sender, System.EventArgs e)
+        {
+            var loginScreen = sender as ConsoleUI.LoginScreen;
+
+            if (loginScreen.Username != "admin" & loginScreen.Password != "admin")
+                loginScreen.Show();
         }
     }
 }

@@ -20,5 +20,10 @@
                 x++;
             }
         }
+
+        protected override void DrawBorder()
+        {
+            base.DrawBorder();
+        }
     }
 }

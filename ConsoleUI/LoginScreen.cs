@@ -11,7 +11,7 @@ namespace ConsoleUI
         private Rectangle rectangle;
         private Label usernameLabel;
         private TextBox usernameTextBox;
-        
+
         public LoginScreen() : base("Login Screen")
         {
             usernameLabel = new Label();
@@ -34,10 +34,42 @@ namespace ConsoleUI
 
         public event EventHandler Cancelled;
 
+        public event EventHandler Login;
+
+        public string Password
+        {
+            get
+            {
+                return passwordTextBox.Text;
+            }
+            set
+            {
+                passwordTextBox.Text = value;
+            }
+        }
+
+        public string Username
+        {
+            get
+            {
+                return usernameTextBox.Text;
+            }
+            set
+            {
+                usernameTextBox.Text = value;
+            }
+        }
+
         protected void OnCancel()
         {
             if (Cancelled != null)
                 Cancelled(this, new EventArgs());
+        }
+
+        protected virtual void OnLogin()
+        {
+            if (Login != null)
+                Login(this, new EventArgs());
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
@@ -52,6 +84,8 @@ namespace ConsoleUI
                 loginButton.Draw();
                 usernameTextBox.Focus();
             }
+            else
+                OnLogin();
         }
 
         private void SetupControls()
@@ -92,6 +126,7 @@ namespace ConsoleUI
             rectangle.Top = usernameLabel.Top - 2;
             rectangle.Width = usernameLabel.Width + usernameTextBox.Width + 4;
             rectangle.Height = 8;
+            rectangle.HasShadow = true;
 
             loginButton.Text = "Login";
             loginButton.Width = 8;
@@ -100,7 +135,7 @@ namespace ConsoleUI
             loginButton.BackgroundColor = ConsoleColor.DarkBlue;
             loginButton.ForegroundColor = ConsoleColor.White;
             loginButton.TextAlign = TextAlign.Center;
-
+            
             cancelButton.Text = "Cancel";
             cancelButton.Width = 8;
             cancelButton.Top = loginButton.Top;
@@ -108,7 +143,7 @@ namespace ConsoleUI
             cancelButton.BackgroundColor = ConsoleColor.DarkBlue;
             cancelButton.ForegroundColor = ConsoleColor.Gray;
             cancelButton.TextAlign = TextAlign.Center;
-
+            
             Controls.Add(rectangle, usernameLabel, usernameTextBox, passwordLabel, passwordTextBox, loginButton, cancelButton);
         }
     }

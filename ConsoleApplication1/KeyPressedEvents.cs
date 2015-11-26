@@ -37,6 +37,7 @@ namespace ConsoleApplication1
             textBox.BackgroundColor = System.ConsoleColor.DarkGreen;
             textBox.Visible = false;
             textBox.TreatEnterKeyAsTab = false;
+            textBox.HasShadow = true;
 
             screen.Controls.Add(textBox);
 
