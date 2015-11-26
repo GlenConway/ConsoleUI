@@ -132,18 +132,20 @@ namespace ConsoleUI
             loginButton.Width = 8;
             loginButton.Top = passwordTextBox.Top + passwordTextBox.Height + 1;
             loginButton.Left = passwordTextBox.Left;
-            loginButton.BackgroundColor = ConsoleColor.DarkBlue;
-            loginButton.ForegroundColor = ConsoleColor.White;
+            loginButton.BackgroundColor = ConsoleColor.Gray;
+            loginButton.ForegroundColor = ConsoleColor.Black;
             loginButton.TextAlign = TextAlign.Center;
-            
+            loginButton.HasShadow = true;
+
             cancelButton.Text = "Cancel";
             cancelButton.Width = 8;
             cancelButton.Top = loginButton.Top;
             cancelButton.Left = loginButton.Left + loginButton.Width + 1;
-            cancelButton.BackgroundColor = ConsoleColor.DarkBlue;
-            cancelButton.ForegroundColor = ConsoleColor.Gray;
+            cancelButton.BackgroundColor = ConsoleColor.Gray;
+            cancelButton.ForegroundColor = ConsoleColor.Black;
             cancelButton.TextAlign = TextAlign.Center;
-            
+            cancelButton.HasShadow = true;
+
             Controls.Add(rectangle, usernameLabel, usernameTextBox, passwordLabel, passwordTextBox, loginButton, cancelButton);
         }
     }

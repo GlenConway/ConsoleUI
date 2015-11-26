@@ -34,6 +34,16 @@ namespace ConsoleUI
             }
         }
 
+        internal static ConsoleColor ColorAttributeToConsoleColor(Color c)
+        {
+            // Turn background colors into foreground colors.
+            if ((c & Color.BackgroundMask) != 0)
+            {
+                c = (Color)(((int)c) >> 4);
+            }
+            return (ConsoleColor)c;
+        }
+
         internal static Color ConsoleColorToColorAttribute(ConsoleColor color, bool isBackground)
         {
             if ((((int)color) & ~0xf) != 0)

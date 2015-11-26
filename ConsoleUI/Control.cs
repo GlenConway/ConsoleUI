@@ -195,12 +195,12 @@ namespace ConsoleUI
 
             for (int i = Left + 1; i <= Right + 1; i++)
             {
-                Owner.Buffer.Write((short)i, (short)Bottom + 1, 219, System.ConsoleColor.Black, System.ConsoleColor.DarkGray);
+                Owner.Buffer.SetColor((short)i, (short)Bottom + 1, ConsoleColor.DarkGray, ConsoleColor.Black);
             }
 
             for (int i = Top + 1; i <= Bottom; i++)
             {
-                Owner.Buffer.Write((short)Right + 1, (short)i, 219, System.ConsoleColor.Black, System.ConsoleColor.DarkGray);
+                Owner.Buffer.SetColor((short)Right + 1, (short)i, ConsoleColor.DarkGray, ConsoleColor.Black);
             }
         }
 
@@ -217,7 +217,7 @@ namespace ConsoleUI
 
         protected virtual void OnWrite(int x, int y, string text, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
         {
-            owner.Buffer.Write((short)x, (short)y, text, foregroundColor, backgroundColor);
+            Owner.Buffer.Write((short)x, (short)y, text, foregroundColor, backgroundColor);
         }
 
         protected void Write(string text)
@@ -273,41 +273,41 @@ namespace ConsoleUI
 
         private void DrawDoubleBorder()
         {
-            owner.Buffer.Write((short)Left, (short)Top, DoubleBorderTopLeft, ForegroundColor, BackgroundColor);
-            owner.Buffer.Write((short)Right, (short)Top, DoubleBorderTopRight, ForegroundColor, BackgroundColor);
-            owner.Buffer.Write((short)Left, (short)Bottom, DoubleBorderBottomLeft, ForegroundColor, BackgroundColor);
-            owner.Buffer.Write((short)Right, (short)Bottom, DoubleBorderBottomRight, ForegroundColor, BackgroundColor);
+            Owner.Buffer.Write((short)Left, (short)Top, DoubleBorderTopLeft, ForegroundColor, BackgroundColor);
+            Owner.Buffer.Write((short)Right, (short)Top, DoubleBorderTopRight, ForegroundColor, BackgroundColor);
+            Owner.Buffer.Write((short)Left, (short)Bottom, DoubleBorderBottomLeft, ForegroundColor, BackgroundColor);
+            Owner.Buffer.Write((short)Right, (short)Bottom, DoubleBorderBottomRight, ForegroundColor, BackgroundColor);
 
             for (int i = Left + 1; i < Right; i++)
             {
-                owner.Buffer.Write((short)i, (short)Top, DoubleBorderHorizontal, ForegroundColor, BackgroundColor);
-                owner.Buffer.Write((short)i, (short)Bottom, DoubleBorderHorizontal, ForegroundColor, BackgroundColor);
+                Owner.Buffer.Write((short)i, (short)Top, DoubleBorderHorizontal, ForegroundColor, BackgroundColor);
+                Owner.Buffer.Write((short)i, (short)Bottom, DoubleBorderHorizontal, ForegroundColor, BackgroundColor);
             }
 
             for (int i = Top + 1; i < Bottom; i++)
             {
-                owner.Buffer.Write((short)Left, (short)i, DoubleBorderVertical, ForegroundColor, BackgroundColor);
-                owner.Buffer.Write((short)Right, (short)i, DoubleBorderVertical, ForegroundColor, BackgroundColor);
+                Owner.Buffer.Write((short)Left, (short)i, DoubleBorderVertical, ForegroundColor, BackgroundColor);
+                Owner.Buffer.Write((short)Right, (short)i, DoubleBorderVertical, ForegroundColor, BackgroundColor);
             }
         }
 
         private void DrawSingleBorder()
         {
-            owner.Buffer.Write((short)Left, (short)Top, SingleBorderTopLeft, ForegroundColor, BackgroundColor);
-            owner.Buffer.Write((short)Right, (short)Top, SingleBorderTopRight, ForegroundColor, BackgroundColor);
-            owner.Buffer.Write((short)Left, (short)Bottom, SingleBorderBottomLeft, ForegroundColor, BackgroundColor);
-            owner.Buffer.Write((short)Right, (short)Bottom, SingleBorderBottomRight, ForegroundColor, BackgroundColor);
+            Owner.Buffer.Write((short)Left, (short)Top, SingleBorderTopLeft, ForegroundColor, BackgroundColor);
+            Owner.Buffer.Write((short)Right, (short)Top, SingleBorderTopRight, ForegroundColor, BackgroundColor);
+            Owner.Buffer.Write((short)Left, (short)Bottom, SingleBorderBottomLeft, ForegroundColor, BackgroundColor);
+            Owner.Buffer.Write((short)Right, (short)Bottom, SingleBorderBottomRight, ForegroundColor, BackgroundColor);
 
             for (int i = Left + 1; i < Right; i++)
             {
-                owner.Buffer.Write((short)i, (short)Top, SingleBorderHorizontal, ForegroundColor, BackgroundColor);
-                owner.Buffer.Write((short)i, (short)Bottom, SingleBorderHorizontal, ForegroundColor, BackgroundColor);
+                Owner.Buffer.Write((short)i, (short)Top, SingleBorderHorizontal, ForegroundColor, BackgroundColor);
+                Owner.Buffer.Write((short)i, (short)Bottom, SingleBorderHorizontal, ForegroundColor, BackgroundColor);
             }
 
             for (int i = Top + 1; i < Bottom; i++)
             {
-                owner.Buffer.Write((short)Left, (short)i, SingleBorderVertical, ForegroundColor, BackgroundColor);
-                owner.Buffer.Write((short)Right, (short)i, SingleBorderVertical, ForegroundColor, BackgroundColor);
+                Owner.Buffer.Write((short)Left, (short)i, SingleBorderVertical, ForegroundColor, BackgroundColor);
+                Owner.Buffer.Write((short)Right, (short)i, SingleBorderVertical, ForegroundColor, BackgroundColor);
             }
         }
     }

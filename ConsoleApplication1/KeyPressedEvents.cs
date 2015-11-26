@@ -23,7 +23,7 @@ namespace ConsoleApplication1
 
             for (int i = 0; i < 50; i++)
             {
-                control1.Items.Add(string.Format("Item {0}", i + 1));
+                control1.Items.Add(string.Format("Item {0} - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua", i + 1));
             }
 
             screen.Controls.Add(control1);
@@ -67,7 +67,7 @@ namespace ConsoleApplication1
 
             textBox.Leave += (s, e) =>
             {
-                screen.Exit();
+                //screen.Exit();
             };
         }
     }

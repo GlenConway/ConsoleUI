@@ -21,7 +21,7 @@ namespace ConsoleApplication1
             control1.Top = 0;
             control1.Width = 20;
             control1.Height = 10;
-
+            
             for (int i = 0; i < 20; i++)
             {
                 control1.Items.Add(string.Format("Item {0}", i + 1));
@@ -121,6 +121,7 @@ namespace ConsoleApplication1
             control1.Width = 20;
             control1.Height = 10;
             control1.BorderStyle = BorderStyle.Double;
+            control1.HasShadow = true;
 
             for (int i = 0; i < 20; i++)
             {
@@ -134,6 +135,7 @@ namespace ConsoleApplication1
             control2.Width = 30;
             control2.Height = 15;
             control2.BorderStyle = BorderStyle.Double;
+            control2.HasShadow = true;
 
             for (int i = 0; i < 40; i++)
             {
@@ -147,6 +149,7 @@ namespace ConsoleApplication1
             control3.Width = 25;
             control3.Height = 10;
             control3.BorderStyle = BorderStyle.Double;
+            control3.HasShadow = true;
 
             for (int i = 0; i < 5; i++)
             {

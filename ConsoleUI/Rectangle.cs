@@ -2,6 +2,11 @@
 {
     public class Rectangle : Control
     {
+        protected override void DrawBorder()
+        {
+            base.DrawBorder();
+        }
+
         protected override void DrawControl()
         {
             var x = ClientLeft;
@@ -19,11 +24,6 @@
 
                 x++;
             }
-        }
-
-        protected override void DrawBorder()
-        {
-            base.DrawBorder();
         }
     }
 }
