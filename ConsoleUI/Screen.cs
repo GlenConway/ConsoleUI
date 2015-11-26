@@ -4,10 +4,12 @@ namespace ConsoleUI
 {
     public class Screen : IControlContainer
     {
+        public ConsoleColor BackgroundColor = ConsoleColor.Gray;
+        public ConsoleColor ForegroundColor = ConsoleColor.DarkGray;
         private readonly Buffer buffer;
+        private readonly ControlCollection controls;
         private readonly int height;
         private readonly int width;
-        private readonly ControlCollection controls;
         private Label footer;
 
         public Screen(string name) : this(Console.WindowWidth, Console.WindowHeight, name)
@@ -27,6 +29,9 @@ namespace ConsoleUI
             Console.BufferWidth = Console.WindowWidth;
 
             buffer = new Buffer(0, 0, height, width);
+
+            Clear();
+
             controls = new ControlCollection(this);
 
             controls.Repaint += (s, e) =>
@@ -68,6 +73,9 @@ namespace ConsoleUI
                     footer.Left = Console.WindowLeft;
                     footer.Width = Console.WindowWidth;
 
+                    footer.BackgroundColor = BackgroundColor;
+                    footer.ForegroundColor = ForegroundColor;
+
                     footer.Owner = this;
                 }
 
@@ -94,6 +102,30 @@ namespace ConsoleUI
             }
         }
 
+        public void Clear()
+        {
+            var x = 0;
+
+            while (x < width)
+            {
+                var y = 0;
+
+                while (y <= height)
+                {
+                    Buffer.Write((short)x, (short)y, 32, ForegroundColor, BackgroundColor);
+
+                    y++;
+                }
+
+                x++;
+            }
+        }
+
+        public void Exit()
+        {
+            Controls.Exit();
+        }
+
         public void Show()
         {
             Console.CursorVisible = false;
@@ -102,11 +134,6 @@ namespace ConsoleUI
             Paint();
 
             Controls.SetFocus();
-        }
-
-        public void Exit()
-        {
-            Controls.Exit();
         }
 
         protected void Draw()

@@ -42,9 +42,12 @@
   <ItemGroup>
     <Compile Include="BorderStyle.cs" />
     <Compile Include="Buffer.cs" />
+    <Compile Include="Button.cs" />
     <Compile Include="Control.cs" />
     <Compile Include="ListBox.cs" />
     <Compile Include="KeyPressedEventArgs.cs" />
+    <Compile Include="LoginScreen.cs" />
+    <Compile Include="Rectangle.cs" />
     <Compile Include="ScreenCollection.cs" />
     <Compile Include="ControlCollection.cs" />
     <Compile Include="IControlContainer.cs" />
@@ -55,6 +58,7 @@
     <Compile Include="TabEventArgs.cs" />
     <Compile Include="TextAlign.cs" />
     <Compile Include="TextBox.cs" />
+    <Compile Include="InputControl.cs" />
     <Compile Include="TextBoxType.cs" />
     <Compile Include="TextChangedEventArgs.cs" />
   </ItemGroup>

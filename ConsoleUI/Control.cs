@@ -5,6 +5,7 @@ namespace ConsoleUI
     public class Control
     {
         public ConsoleColor BackgroundColor = ConsoleColor.Blue;
+
         public ConsoleColor ForegroundColor = ConsoleColor.Gray;
         protected int X;
         protected int Y;
@@ -32,15 +33,7 @@ namespace ConsoleUI
             Visible = true;
         }
 
-        public event EventHandler Enter;
-
-        public event EventHandler EscPressed;
-
-        public event EventHandler Leave;
-
         public event EventHandler Repaint;
-
-        public event EventHandler<TabEventArgs> TabPressed;
 
         public BorderStyle BorderStyle
         {
@@ -65,6 +58,14 @@ namespace ConsoleUI
             }
         }
 
+        public int ClientBottom
+        {
+            get
+            {
+                return ClientTop + ClientHeight - 1;
+            }
+        }
+
         public int ClientRight
         {
             get
@@ -72,8 +73,6 @@ namespace ConsoleUI
                 return ClientLeft + ClientWidth - 1;
             }
         }
-
-        public bool HasFocus { get; set; }
 
         public int Height { get; set; }
 
@@ -98,10 +97,6 @@ namespace ConsoleUI
                 return Left + Width - 1;
             }
         }
-
-        public int TabOrder { get; set; }
-
-        public bool TabStop { get; set; }
 
         public string Text { get; set; }
 
@@ -174,30 +169,6 @@ namespace ConsoleUI
             DrawControl();
         }
 
-        public void Focus()
-        {
-            if (!TabStop)
-                return;
-
-            HasFocus = true;
-            Console.CursorVisible = true;
-            Console.CursorLeft = Left;
-            Console.CursorTop = Top;
-
-            OnEnter();
-        }
-
-        protected void Blur()
-        {
-            if (!TabStop)
-                return;
-
-            HasFocus = false;
-            Console.CursorVisible = false;
-
-            OnLeave();
-        }
-
         protected virtual void DrawBorder()
         {
             if (BorderStyle == BorderStyle.None)
@@ -220,38 +191,17 @@ namespace ConsoleUI
             Write(Text);
         }
 
-        protected virtual void OnEnter()
-        {
-            if (Enter != null)
-                Enter(this, new EventArgs());
-        }
-
-        protected virtual void OnEscPressed()
-        {
-            if (EscPressed != null)
-                EscPressed(this, new EventArgs());
-        }
-
-        protected virtual void OnLeave()
-        {
-            if (Leave != null)
-                Leave(this, new EventArgs());
-        }
-
         protected virtual void OnRepaint()
         {
             if (Repaint != null)
                 Repaint(this, new EventArgs());
         }
 
-        protected virtual void OnTabPressed(bool shift)
-        {
-            if (TabPressed != null)
-                TabPressed(this, new TabEventArgs(shift));
-        }
-
         protected void Write(string text)
         {
+            if (ClientWidth < 1)
+                return;
+
             if (text == null)
                 text = string.Empty;
 
@@ -287,7 +237,7 @@ namespace ConsoleUI
                     }
             }
 
-            owner.Buffer.Write((short)(X + ClientLeft), (short)(Y + ClientTop), text, ForegroundColor, BackgroundColor);
+            OnWrite(X + ClientLeft, Y + ClientTop, text, ForegroundColor, BackgroundColor);
 
             //X += text.Length;
 
@@ -298,6 +248,10 @@ namespace ConsoleUI
             //}
         }
 
+        protected virtual void OnWrite(int x, int y, string text, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
+        {
+            owner.Buffer.Write((short)x, (short)y, text, foregroundColor, backgroundColor);
+        }
         private void DrawDoubleBorder()
         {
             owner.Buffer.Write((short)Left, (short)Top, DoubleBorderTopLeft, ForegroundColor, BackgroundColor);

@@ -8,9 +8,9 @@ namespace ConsoleUI
     public class ControlCollection : ICollection<Control>
     {
         private readonly IControlContainer owner;
+        private bool exit;
         private IList<Control> list = new List<Control>();
         private int tabOrder = 0;
-        private bool exit;
 
         public ControlCollection(IControlContainer owner)
         {
@@ -35,39 +35,62 @@ namespace ConsoleUI
             }
         }
 
+        private IEnumerable<InputControl> InputControls
+        {
+            get
+            {
+                var result =  list.OfType<InputControl>();
+
+                return result;
+            }
+        }
+
+        public void Add(params Control[] items)
+        {
+            foreach (var item in items)
+            {
+                Add(item);
+            }
+        }
+
         public void Add(Control item)
         {
             item.Owner = owner;
 
-            var lastControl = LastControl();
-
-            if (lastControl != null)
-            {
-                item.TabOrder = lastControl.TabOrder + 1;
-            }
-
             list.Add(item);
-
-            item.TabPressed += (s, e) =>
-            {
-                TabToNextControl(e.Shift);
-            };
 
             item.Repaint += (s, e) =>
             {
                 OnRepaint();
             };
 
-            item.Enter += (s, e) =>
-            {
-                foreach (var control in list)
-                {
-                    control.HasFocus = control == s;
+            var inputControl = item as InputControl;
 
-                    if (control == s)
-                        tabOrder = control.TabOrder;
+            if (inputControl != null)
+            {
+                var lastControl = LastControl();
+
+                if (lastControl != null)
+                {
+                    inputControl.TabOrder = lastControl.TabOrder + 1;
                 }
-            };
+
+                inputControl.TabPressed += (s, e) =>
+                {
+                    TabToNextControl(e.Shift);
+                };
+
+                inputControl.Enter += (s, e) =>
+                {
+                    foreach (var control in InputControls)
+                    {
+                        control.HasFocus = control == s;
+
+                        if (control == s)
+                            tabOrder = control.TabOrder;
+                    }
+                };
+            }
         }
 
         public void Clear()
@@ -92,7 +115,7 @@ namespace ConsoleUI
 
         public Control HasFocus()
         {
-            return list.Where(p => p.HasFocus).LastOrDefault();
+            return InputControls.Where(p => p.HasFocus).LastOrDefault();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -109,7 +132,7 @@ namespace ConsoleUI
         {
             exit = true;
 
-            foreach (var item in list.Where(p => p.HasFocus))
+            foreach (var item in InputControls.Where(p => p.HasFocus))
             {
                 item.HasFocus = false;
             }
@@ -122,7 +145,7 @@ namespace ConsoleUI
             if (exit)
                 return;
 
-            var control = list.OrderBy(p => p.TabOrder).Where(p => p.TabStop).Where(p => p.Visible).Where(p => p.TabOrder >= tabOrder).FirstOrDefault();
+            var control = InputControls.OrderBy(p => p.TabOrder).Where(p => p.TabStop).Where(p => p.Visible).Where(p => p.TabOrder >= tabOrder).FirstOrDefault();
 
             if (control == null)
                 return;
@@ -136,9 +159,9 @@ namespace ConsoleUI
                 Repaint(this, new EventArgs());
         }
 
-        private Control LastControl()
+        private InputControl LastControl()
         {
-            return list.OrderBy(p => p.TabOrder).Where(p => p.Visible).LastOrDefault();
+            return InputControls.OrderBy(p => p.TabOrder).Where(p => p.Visible).LastOrDefault();
         }
 
         private void TabToNextControl(bool shift)
@@ -146,7 +169,7 @@ namespace ConsoleUI
             if (exit)
                 return;
 
-            if (list.Where(p => p.TabStop).Where(p => p.Visible).Count() == 1)
+            if (InputControls.Where(p => p.TabStop).Where(p => p.Visible).Count() == 1)
                 return;
 
             var last = LastControl();

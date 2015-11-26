@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ConsoleUI
 {
-    public class ListBox : Control
+    public class ListBox : InputControl
     {
         public int CurrentIndex = 0;
 
@@ -175,7 +175,7 @@ namespace ConsoleUI
             }
         }
 
-        private void ReadKey()
+        protected override void ReadKey()
         {
             while (HasFocus)
             {

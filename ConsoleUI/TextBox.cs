@@ -2,9 +2,9 @@
 
 namespace ConsoleUI
 {
-    public class TextBox : Control
+    public class TextBox : InputControl
     {
-        public string PasswordCharacter = "*";
+        public char PasswordCharacter = '*';
         private string originalText;
 
         public TextBox()
@@ -40,7 +40,7 @@ namespace ConsoleUI
                 return;
             }
 
-            Write(new string(PasswordCharacter.ToCharArray(), 0, Text.Length));
+            Write(new string(PasswordCharacter, Text.Length));
         }
 
         protected override void OnEnter()
@@ -88,7 +88,7 @@ namespace ConsoleUI
             originalText = Text;
         }
 
-        private void ReadKey()
+        protected override void ReadKey()
         {
             while (HasFocus)
             {

@@ -4,7 +4,7 @@ namespace ConsoleApplication1
 {
     internal static class KeyPressedEvents
     {
-        internal static void SetupListBoxScreens(ScreenCollection screens)
+        internal static void SetupKeyPressedEventScreens(ScreenCollection screens)
         {
             ListBoxPopup(screens);
         }

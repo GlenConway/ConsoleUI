@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LoginScreen.cs" />
     <Compile Include="Labels.cs" />
     <Compile Include="KeyPressedEvents.cs" />
     <Compile Include="Program.cs" />
