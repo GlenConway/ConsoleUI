@@ -5,6 +5,7 @@ namespace ConsoleUI
     public class LoginScreen : Screen
     {
         private Button cancelButton;
+        private Label failureLabel;
         private Button loginButton;
         private Label passwordLabel;
         private TextBox passwordTextBox;
@@ -21,6 +22,7 @@ namespace ConsoleUI
             rectangle = new Rectangle();
             loginButton = new Button();
             cancelButton = new Button();
+            failureLabel = new Label();
 
             SetupControls();
 
@@ -30,6 +32,16 @@ namespace ConsoleUI
             loginButton.EscPressed += CancelButton_Click;
             usernameTextBox.EscPressed += CancelButton_Click;
             passwordTextBox.EscPressed += CancelButton_Click;
+            passwordTextBox.KeyPressed += PasswordTextBox_KeyPressed;
+        }
+
+        private void PasswordTextBox_KeyPressed(object sender, KeyPressedEventArgs e)
+        {
+            if (e.Info.Key == ConsoleKey.Enter)
+            {
+                LoginButton_Click(sender, new EventArgs());
+                e.Handled = true;
+            }
         }
 
         public event EventHandler Cancelled;
@@ -60,6 +72,25 @@ namespace ConsoleUI
             }
         }
 
+        public override void Show()
+        {
+            if (string.IsNullOrWhiteSpace(Username))
+            {
+                base.Show();
+
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(Password))
+            {
+                Show(passwordTextBox);
+
+                return;
+            }
+
+            Show(loginButton);
+        }
+
         protected void OnCancel()
         {
             if (Cancelled != null)
@@ -86,7 +117,15 @@ namespace ConsoleUI
                 OnLogin(args);
 
                 if (args.Success)
+                {
+                    failureLabel.Visible = false;
+                    failureLabel.Text = string.Empty;
+
                     return;
+                }
+                
+                failureLabel.Visible = true;
+                failureLabel.Text = args.FailureMessage;
             }
 
             loginButton.Draw();
@@ -125,6 +164,7 @@ namespace ConsoleUI
             passwordTextBox.Width = textBoxWidth;
             passwordTextBox.Top = y + 1;
             passwordTextBox.Left = passwordLabel.Left + passwordLabel.Width;
+            passwordTextBox.TreatEnterKeyAsTab = false;
 
             rectangle.BorderStyle = BorderStyle.Double;
             rectangle.Left = usernameLabel.Left - 2;
@@ -151,7 +191,16 @@ namespace ConsoleUI
             cancelButton.TextAlign = TextAlign.Center;
             cancelButton.HasShadow = true;
 
-            Controls.Add(rectangle, usernameLabel, usernameTextBox, passwordLabel, passwordTextBox, loginButton, cancelButton);
+            failureLabel.Width = rectangle.Width * 2;
+            failureLabel.BorderStyle = BorderStyle.Double;
+            failureLabel.HasShadow = true;
+            failureLabel.Left = (Width / 2) - (failureLabel.Width / 2);
+            failureLabel.Top = rectangle.Bottom + 3;
+            failureLabel.BackgroundColor = ConsoleColor.DarkRed;
+            failureLabel.ForegroundColor = ConsoleColor.White;
+            failureLabel.Visible = false;
+
+            Controls.Add(rectangle, usernameLabel, usernameTextBox, passwordLabel, passwordTextBox, loginButton, cancelButton, failureLabel);
         }
     }
 }

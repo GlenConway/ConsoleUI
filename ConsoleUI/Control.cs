@@ -26,6 +26,7 @@ namespace ConsoleUI
         private byte SingleBorderTopRight = 191;
         private byte SingleBorderVertical = 179;
 
+        private string text;
         private bool visible;
 
         public Control()
@@ -99,7 +100,21 @@ namespace ConsoleUI
             }
         }
 
-        public string Text { get; set; }
+        public string Text
+        {
+            get
+            {
+                return text;
+            }
+            set
+            {
+                if (value != text)
+                {
+                    text = value;
+                    OnRepaint();
+                }
+            }
+        }
 
         public TextAlign TextAlign { get; set; }
 
@@ -113,9 +128,12 @@ namespace ConsoleUI
             }
             set
             {
-                visible = value;
+                if (value != visible)
+                {
+                    visible = value;
 
-                OnRepaint();
+                    OnRepaint();
+                }
             }
         }
 

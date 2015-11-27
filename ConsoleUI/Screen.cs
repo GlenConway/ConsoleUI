@@ -126,7 +126,7 @@ namespace ConsoleUI
             Controls.Exit();
         }
 
-        public void Show()
+        public virtual void Show()
         {
             Console.CursorVisible = false;
 
@@ -134,6 +134,16 @@ namespace ConsoleUI
             Paint();
 
             Controls.SetFocus();
+        }
+
+        internal void Show(InputControl focus)
+        {
+            Console.CursorVisible = false;
+
+            Draw();
+            Paint();
+
+            Controls.SetFocus(focus);
         }
 
         protected void Draw()

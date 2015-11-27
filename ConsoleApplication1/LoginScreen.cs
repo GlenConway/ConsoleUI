@@ -12,6 +12,7 @@ namespace ConsoleApplication1
         private static void ListBoxPopup(ScreenCollection screens)
         {
             var screen = new ConsoleUI.LoginScreen();
+            screen.Username = "admin";
 
             screen.Footer.Text = "Try admin admin.";
 
@@ -23,6 +24,9 @@ namespace ConsoleApplication1
         private static void Screen_Login(object sender, LoginEventArgs e)
         {
             e.Success = (e.Username == "admin" & e.Password == "admin");
+
+            if (!e.Success)
+                e.FailureMessage = "Take the hint.";
         }
     }
 }

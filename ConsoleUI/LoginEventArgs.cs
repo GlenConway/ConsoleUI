@@ -13,6 +13,7 @@ namespace ConsoleUI
             this.username = username;
         }
 
+        public string FailureMessage { get; set; }
         public string Password { get { return password; } }
         public bool Success { get; set; }
         public string Username { get { return username; } }

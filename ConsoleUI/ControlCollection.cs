@@ -39,7 +39,7 @@ namespace ConsoleUI
         {
             get
             {
-                var result =  list.OfType<InputControl>();
+                var result = list.OfType<InputControl>();
 
                 return result;
             }
@@ -148,6 +148,14 @@ namespace ConsoleUI
             var control = InputControls.OrderBy(p => p.TabOrder).Where(p => p.TabStop).Where(p => p.Visible).Where(p => p.TabOrder >= tabOrder).FirstOrDefault();
 
             if (control == null)
+                return;
+
+            control.Focus();
+        }
+
+        internal void SetFocus(InputControl control)
+        {
+            if (exit)
                 return;
 
             control.Focus();

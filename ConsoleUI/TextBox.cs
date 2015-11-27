@@ -95,7 +95,7 @@ namespace ConsoleUI
                 ConsoleKeyInfo info = Console.ReadKey(true);
 
                 if (OnKeyPressed(info))
-                    continue;
+                    return;
 
                 switch (info.Key)
                 {
