@@ -83,8 +83,6 @@ namespace ConsoleUI
             if (TextChanged != null)
                 TextChanged(this, new TextChangedEventArgs(originalText, Text));
 
-            OnRepaint();
-
             originalText = Text;
         }
 

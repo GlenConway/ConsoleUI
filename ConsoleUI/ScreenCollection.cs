@@ -70,5 +70,10 @@ namespace ConsoleUI
         {
             this[index].Show();
         }
+
+        public void Hide(int index)
+        {
+            this[index].Hide();
+        }
     }
 }

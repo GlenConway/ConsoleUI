@@ -23,6 +23,8 @@ namespace ConsoleApplication1
 
         private static void Screen_Login(object sender, LoginEventArgs e)
         {
+            System.Threading.Thread.Sleep(4000);
+
             e.Success = (e.Username == "admin" & e.Password == "admin");
 
             if (!e.Success)

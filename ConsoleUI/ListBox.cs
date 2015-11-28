@@ -17,7 +17,8 @@ namespace ConsoleUI
         private List<string> items;
         private byte ScrollBarDark = 178;
         private byte ScrollBarLight = 176;
-        private byte ScrollBarMedium = 177;
+
+        //private byte ScrollBarMedium = 177;
         private int startIndex = 0;
 
         public ListBox()
@@ -28,6 +29,14 @@ namespace ConsoleUI
         public event EventHandler<KeyPressedEventArgs> KeyPressed;
 
         public event EventHandler Selected;
+
+        public bool HasVerticalScrollBar
+        {
+            get
+            {
+                return Items.Count >= ClientHeight;
+            }
+        }
 
         public IList<string> Items
         {
@@ -97,11 +106,13 @@ namespace ConsoleUI
 
             var y = 0;
 
+            var width = HasVerticalScrollBar ? ClientWidth - 1 : ClientWidth;
+
             for (int i = startIndex; i < endIndex; i++)
             {
                 var label = new Label(Items[i]);
                 label.Owner = Owner;
-                label.Width = ClientWidth;
+                label.Width = width;
                 label.Left = ClientLeft;
                 label.Top = ClientTop + y;
 
@@ -117,7 +128,7 @@ namespace ConsoleUI
             {
                 var label = new Label();
                 label.Owner = Owner;
-                label.Width = ClientWidth;
+                label.Width = width;
                 label.Left = ClientLeft;
                 label.Top = ClientTop + i;
 
@@ -128,6 +139,8 @@ namespace ConsoleUI
             }
 
             DrawVerticalScrollBar();
+
+            Paint();
         }
 
         protected override void OnEnter()
@@ -143,7 +156,6 @@ namespace ConsoleUI
             }
 
             DrawControl();
-            OnRepaint();
 
             ReadKey();
         }
@@ -153,26 +165,12 @@ namespace ConsoleUI
             base.OnLeave();
 
             DrawControl();
-            OnRepaint();
         }
 
         protected virtual void OnSelected()
         {
             if (Selected != null)
                 Selected(this, new EventArgs());
-        }
-
-        private void DrawVerticalScrollBar()
-        {
-            if (Items.Count < ClientHeight)
-                return;
-
-            var position = (int)(ClientHeight * ScrollBarPercent);
-
-            for (int i = 0; i < ClientHeight; i++)
-            {
-                Owner.Buffer.Write((short)ClientRight, (short)ClientTop + (short)i, i == position ? ScrollBarDark : ScrollBarLight, i == position ? ConsoleColor.White : ForegroundColor, BackgroundColor);
-            }
         }
 
         protected override void ReadKey()
@@ -261,7 +259,19 @@ namespace ConsoleUI
                 }
 
                 DrawControl();
-                OnRepaint();
+            }
+        }
+
+        private void DrawVerticalScrollBar()
+        {
+            if (!HasVerticalScrollBar)
+                return;
+
+            var position = (int)(ClientHeight * ScrollBarPercent);
+
+            for (int i = 0; i < ClientHeight; i++)
+            {
+                Owner.Buffer.Write((short)ClientRight, (short)ClientTop + (short)i, i == position ? ScrollBarDark : ScrollBarLight, i == position ? ConsoleColor.White : ForegroundColor, BackgroundColor);
             }
         }
     }

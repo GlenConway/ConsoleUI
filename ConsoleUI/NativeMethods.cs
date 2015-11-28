@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace ConsoleUI
@@ -64,6 +65,31 @@ namespace ConsoleUI
               buffer.Size,
               buffer.Coord,
               ref buffer.Rectangle);
+
+            if (!b)
+            {
+                var e = new Win32Exception();
+
+                System.Diagnostics.Debug.WriteLine(e.Message);
+            }
+        }
+
+        internal static void Paint(int left, int top, int height, int width, Buffer buffer)
+        {
+            var rectangle = new NativeMethods.SmallRect() { Top = (short)top, Left = (short)left, Bottom = (short)(top + height), Right = (short)(left + width) };
+            var coord = new NativeMethods.Coord((short)left, (short)top);
+
+            bool b = WriteConsoleOutput(OutputHandle, buffer.Value,
+              buffer.Size,
+              coord,
+              ref rectangle);
+
+            if (!b)
+            {
+                var e = new Win32Exception();
+
+                System.Diagnostics.Debug.WriteLine(e.Message);
+            }
         }
 
         [DllImport("kernel32.dll", SetLastError = true)]

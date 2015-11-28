@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,8 +15,6 @@ namespace ConsoleUI
         {
             this.owner = owner;
         }
-
-        public event EventHandler Repaint;
 
         public int Count
         {
@@ -58,11 +55,6 @@ namespace ConsoleUI
             item.Owner = owner;
 
             list.Add(item);
-
-            item.Repaint += (s, e) =>
-            {
-                OnRepaint();
-            };
 
             var inputControl = item as InputControl;
 
@@ -159,12 +151,6 @@ namespace ConsoleUI
                 return;
 
             control.Focus();
-        }
-
-        protected virtual void OnRepaint()
-        {
-            if (Repaint != null)
-                Repaint(this, new EventArgs());
         }
 
         private InputControl LastControl()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace ConsoleUI
 {
@@ -11,6 +12,7 @@ namespace ConsoleUI
         private readonly int height;
         private readonly int width;
         private Label footer;
+        private bool visible;
 
         public Screen(string name) : this(Console.WindowWidth, Console.WindowHeight, name)
         {
@@ -33,17 +35,13 @@ namespace ConsoleUI
             Clear();
 
             controls = new ControlCollection(this);
-
-            controls.Repaint += (s, e) =>
-            {
-                Draw();
-                Paint();
-            };
         }
 
         public event EventHandler AfterPaint;
 
-        public event EventHandler BeforePaint;
+        public event CancelEventHandler BeforePaint;
+
+        public event EventHandler Shown;
 
         public Buffer Buffer
         {
@@ -92,7 +90,14 @@ namespace ConsoleUI
         }
 
         public string Name { get; set; }
-        public bool Visible { get; set; }
+
+        public bool Visible
+        {
+            get
+            {
+                return visible;
+            }
+        }
 
         public int Width
         {
@@ -126,28 +131,57 @@ namespace ConsoleUI
             Controls.Exit();
         }
 
+        public void Hide()
+        {
+            visible = false;
+        }
+
+        public void Paint()
+        {
+            var args = new CancelEventArgs();
+
+            OnBeforePaint(args);
+
+            if (args.Cancel)
+                return;
+
+            NativeMethods.Paint(Buffer);
+
+            OnAfterPaint();
+        }
+
         public virtual void Show()
         {
+            Console.Title = Name;
+
             Console.CursorVisible = false;
 
             Draw();
             Paint();
+
+            OnShown();
 
             Controls.SetFocus();
         }
 
         internal void Show(InputControl focus)
         {
+            Console.Title = Name;
+
             Console.CursorVisible = false;
 
             Draw();
             Paint();
+
+            OnShown();
 
             Controls.SetFocus(focus);
         }
 
         protected void Draw()
         {
+            Clear();
+
             foreach (var control in Controls)
                 control.Draw();
 
@@ -160,19 +194,18 @@ namespace ConsoleUI
                 AfterPaint(this, new EventArgs());
         }
 
-        protected virtual void OnBeforePaint()
+        protected virtual void OnBeforePaint(CancelEventArgs args)
         {
             if (BeforePaint != null)
-                BeforePaint(this, new EventArgs());
+                BeforePaint(this, args);
         }
 
-        protected void Paint()
+        protected virtual void OnShown()
         {
-            OnBeforePaint();
+            visible = true;
 
-            NativeMethods.Paint(Buffer);
-
-            OnAfterPaint();
+            if (Shown != null)
+                Shown(this, new EventArgs());
         }
     }
 }

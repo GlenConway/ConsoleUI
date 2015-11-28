@@ -1,12 +1,13 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace ConsoleUI
 {
     public class Control
     {
         public ConsoleColor BackgroundColor = ConsoleColor.Blue;
-
         public ConsoleColor ForegroundColor = ConsoleColor.Gray;
+
         public bool HasShadow = false;
         protected int X;
         protected int Y;
@@ -35,7 +36,9 @@ namespace ConsoleUI
             Visible = true;
         }
 
-        public event EventHandler Repaint;
+        public event EventHandler AfterPaint;
+
+        public event CancelEventHandler BeforePaint;
 
         public BorderStyle BorderStyle
         {
@@ -77,7 +80,6 @@ namespace ConsoleUI
         }
 
         public int Height { get; set; }
-
         public int Left { get; set; }
 
         public IControlContainer Owner
@@ -91,7 +93,7 @@ namespace ConsoleUI
                 owner = value;
             }
         }
-
+                
         public int Right
         {
             get
@@ -111,7 +113,6 @@ namespace ConsoleUI
                 if (value != text)
                 {
                     text = value;
-                    OnRepaint();
                 }
             }
         }
@@ -132,7 +133,7 @@ namespace ConsoleUI
                 {
                     visible = value;
 
-                    OnRepaint();
+                    Draw();
                 }
             }
         }
@@ -184,6 +185,8 @@ namespace ConsoleUI
             if (!Visible)
                 return;
 
+            System.Diagnostics.Debug.WriteLine("{0}::{1}", this.GetType().Name, "Draw");
+
             DrawBorder();
             DrawControl();
             DrawShadow();
@@ -203,6 +206,8 @@ namespace ConsoleUI
 
         protected virtual void DrawControl()
         {
+            System.Diagnostics.Debug.WriteLine("{0}::{1}", this.GetType().Name, "DrawControl");
+
             DrawText();
         }
 
@@ -211,31 +216,68 @@ namespace ConsoleUI
             if (!HasShadow)
                 return;
 
-            for (int i = Left + 1; i <= Right + 1; i++)
-            {
-                Owner.Buffer.SetColor((short)i, (short)Bottom + 1, ConsoleColor.DarkGray, ConsoleColor.Black);
-            }
+            System.Diagnostics.Debug.WriteLine("{0}::{1}", this.GetType().Name, "DrawShadow");
 
-            for (int i = Top + 1; i <= Bottom; i++)
-            {
-                Owner.Buffer.SetColor((short)Right + 1, (short)i, ConsoleColor.DarkGray, ConsoleColor.Black);
-            }
+            var right = Right + 1;
+            var bottom = Bottom + 1;
+
+            if (bottom < Owner.Buffer.Rectangle.Bottom)
+                for (int i = Left + 1; i <= Right + 1; i++)
+                {
+                    if (i < Owner.Buffer.Rectangle.Right)
+                        Owner.Buffer.SetColor((short)i, (short)bottom, ConsoleColor.DarkGray, ConsoleColor.Black);
+                }
+
+            if (right < Owner.Buffer.Rectangle.Right)
+                for (int i = Top + 1; i <= Bottom; i++)
+                {
+                    if (i < Owner.Buffer.Rectangle.Bottom)
+                        Owner.Buffer.SetColor((short)right, (short)i, ConsoleColor.DarkGray, ConsoleColor.Black);
+                }
         }
 
         protected virtual void DrawText()
         {
+            System.Diagnostics.Debug.WriteLine("{0}::{1}", this.GetType().Name, "DrawText");
+
             Write(Text);
         }
 
-        protected virtual void OnRepaint()
+        protected virtual void OnAfterPaint()
         {
-            if (Repaint != null)
-                Repaint(this, new EventArgs());
+            if (AfterPaint != null)
+                AfterPaint(this, new EventArgs());
+        }
+
+        protected virtual void OnBeforePaint(CancelEventArgs args)
+        {
+            if (BeforePaint != null)
+                BeforePaint(this, args);
         }
 
         protected virtual void OnWrite(int x, int y, string text, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
         {
             Owner.Buffer.Write((short)x, (short)y, text, foregroundColor, backgroundColor);
+        }
+
+        protected virtual void Paint()
+        {
+            if (Owner == null)
+                return;
+            
+            var args = new CancelEventArgs();
+
+            OnBeforePaint(args);
+
+            if (args.Cancel)
+                return;
+
+            var width = HasShadow ? Width + 1 : Width;
+            var height = HasShadow ? Height + 1 : Height;
+
+            NativeMethods.Paint(Left, Top, height, width, Owner.Buffer);
+
+            OnAfterPaint();
         }
 
         protected void Write(string text)
@@ -291,6 +333,8 @@ namespace ConsoleUI
 
         private void DrawDoubleBorder()
         {
+            System.Diagnostics.Debug.WriteLine("{0}::{1}", this.GetType().Name, "DrawDoubleBorder");
+
             Owner.Buffer.Write((short)Left, (short)Top, DoubleBorderTopLeft, ForegroundColor, BackgroundColor);
             Owner.Buffer.Write((short)Right, (short)Top, DoubleBorderTopRight, ForegroundColor, BackgroundColor);
             Owner.Buffer.Write((short)Left, (short)Bottom, DoubleBorderBottomLeft, ForegroundColor, BackgroundColor);
@@ -311,6 +355,8 @@ namespace ConsoleUI
 
         private void DrawSingleBorder()
         {
+            System.Diagnostics.Debug.WriteLine("{0}::{1}", this.GetType().Name, "DrawSingleBorder");
+
             Owner.Buffer.Write((short)Left, (short)Top, SingleBorderTopLeft, ForegroundColor, BackgroundColor);
             Owner.Buffer.Write((short)Right, (short)Top, SingleBorderTopRight, ForegroundColor, BackgroundColor);
             Owner.Buffer.Write((short)Left, (short)Bottom, SingleBorderBottomLeft, ForegroundColor, BackgroundColor);

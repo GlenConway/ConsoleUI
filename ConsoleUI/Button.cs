@@ -46,18 +46,9 @@ namespace ConsoleUI
 
             DrawText();
 
-            OnRepaint();
-
             ReadKey();
         }
-
-        protected override void OnLeave()
-        {
-            base.OnLeave();
-
-            OnRepaint();
-        }
-
+        
         protected override void ReadKey()
         {
             while (HasFocus)

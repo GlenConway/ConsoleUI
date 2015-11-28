@@ -67,7 +67,12 @@ namespace ConsoleApplication1
 
             textBox.Leave += (s, e) =>
             {
-                //screen.Exit();
+                //textBox.Visible = false;
+            };
+
+            control1.Enter += (s, e) =>
+            {
+                textBox.Visible = false;
             };
         }
     }

@@ -15,10 +15,11 @@ namespace ConsoleApplication1
             Console.BufferWidth = Console.WindowWidth;
 
             LoginScreen.SetupLoginScreen(screens);
-            //Labels.SetupLabelScreens(screens);
-            //TextBoxes.SetupTextBoxScreens(screens);
-            //ListBoxes.SetupListBoxScreens(screens);
-            //KeyPressedEvents.SetupKeyPressedEventScreens(screens);
+            Labels.SetupLabelScreens(screens);
+            TextBoxes.SetupTextBoxScreens(screens);
+            ListBoxes.SetupListBoxScreens(screens);
+            KeyPressedEvents.SetupKeyPressedEventScreens(screens);
+            ProgressBars.SetupProgressBars(screens);
 
             ShowScreens();
         }

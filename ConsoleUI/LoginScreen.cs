@@ -9,6 +9,7 @@ namespace ConsoleUI
         private Button loginButton;
         private Label passwordLabel;
         private TextBox passwordTextBox;
+        private ProgressBar progressBar;
         private Rectangle rectangle;
         private Label usernameLabel;
         private TextBox usernameTextBox;
@@ -23,6 +24,7 @@ namespace ConsoleUI
             loginButton = new Button();
             cancelButton = new Button();
             failureLabel = new Label();
+            progressBar = new ProgressBar();
 
             SetupControls();
 
@@ -33,15 +35,6 @@ namespace ConsoleUI
             usernameTextBox.EscPressed += CancelButton_Click;
             passwordTextBox.EscPressed += CancelButton_Click;
             passwordTextBox.KeyPressed += PasswordTextBox_KeyPressed;
-        }
-
-        private void PasswordTextBox_KeyPressed(object sender, KeyPressedEventArgs e)
-        {
-            if (e.Info.Key == ConsoleKey.Enter)
-            {
-                LoginButton_Click(sender, new EventArgs());
-                e.Handled = true;
-            }
         }
 
         public event EventHandler Cancelled;
@@ -112,24 +105,35 @@ namespace ConsoleUI
         {
             if (!string.IsNullOrWhiteSpace(usernameTextBox.Text))
             {
+                Console.CursorVisible = false;
+
+                progressBar.Visible = true;
+
                 var args = new LoginEventArgs(Username, Password);
 
                 OnLogin(args);
 
-                if (args.Success)
-                {
-                    failureLabel.Visible = false;
-                    failureLabel.Text = string.Empty;
+                progressBar.Visible = false;
 
+                if (args.Success)
                     return;
-                }
-                
+
                 failureLabel.Visible = true;
                 failureLabel.Text = args.FailureMessage;
             }
 
             loginButton.Draw();
-            usernameTextBox.Focus();
+            Password = string.Empty;
+            passwordTextBox.Focus();
+        }
+
+        private void PasswordTextBox_KeyPressed(object sender, KeyPressedEventArgs e)
+        {
+            if (e.Info.Key == ConsoleKey.Enter)
+            {
+                LoginButton_Click(sender, new EventArgs());
+                e.Handled = true;
+            }
         }
 
         private void SetupControls()
@@ -200,7 +204,16 @@ namespace ConsoleUI
             failureLabel.ForegroundColor = ConsoleColor.White;
             failureLabel.Visible = false;
 
-            Controls.Add(rectangle, usernameLabel, usernameTextBox, passwordLabel, passwordTextBox, loginButton, cancelButton, failureLabel);
+            progressBar.Top = (Height / 2) - (progressBar.Height / 2);
+            progressBar.Width = 30;
+            progressBar.Left = (Width / 2) - (progressBar.Width / 2);
+            progressBar.BorderStyle = BorderStyle.Double;
+            progressBar.BlockColor = ConsoleColor.Green;
+            progressBar.HasShadow = true;
+            progressBar.ProgressBarStyle = ProgressBarStyle.Marquee;
+            progressBar.Visible = false;
+
+            Controls.Add(rectangle, usernameLabel, usernameTextBox, passwordLabel, passwordTextBox, loginButton, cancelButton, failureLabel, progressBar);
         }
     }
 }
