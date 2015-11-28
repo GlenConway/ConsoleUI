@@ -122,8 +122,11 @@ namespace ConsoleUI
                 failureLabel.Text = args.FailureMessage;
             }
 
-            loginButton.Draw();
             Password = string.Empty;
+
+            Draw();
+            Paint();
+
             passwordTextBox.Focus();
         }
 

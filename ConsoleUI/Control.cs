@@ -133,7 +133,11 @@ namespace ConsoleUI
                 {
                     visible = value;
 
-                    Draw();
+                    if (visible)
+                    {
+                        Draw();
+                        Paint();
+                    }
                 }
             }
         }

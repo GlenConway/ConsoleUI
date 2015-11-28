@@ -45,10 +45,20 @@ namespace ConsoleUI
             base.OnEnter();
 
             DrawText();
+            Paint();
 
             ReadKey();
         }
-        
+
+        protected override void OnLeave()
+        {
+            Console.CursorVisible = false;
+
+            base.OnLeave();
+
+            DrawText();
+            Paint();
+        }
         protected override void ReadKey()
         {
             while (HasFocus)

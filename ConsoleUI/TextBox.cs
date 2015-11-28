@@ -57,7 +57,7 @@ namespace ConsoleUI
                 Console.CursorLeft += Text.Length;
 
             originalText = Text;
-
+            
             ReadKey();
         }
 

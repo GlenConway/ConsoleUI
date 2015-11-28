@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/GlenConway/ConsoleUI</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Better Login event handling.</releaseNotes>
+    <releaseNotes>Added ProgressBar.</releaseNotes>
     <copyright>Copyright 2015 Glen Conway</copyright>
     <tags>Console UI DOS Legacy</tags>
   </metadata>
