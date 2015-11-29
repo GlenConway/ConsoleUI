@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LoadingScreen.cs" />
     <Compile Include="ProgressBars.cs" />
     <Compile Include="LoginScreen.cs" />
     <Compile Include="Labels.cs" />
