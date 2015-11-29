@@ -24,6 +24,8 @@ namespace ConsoleApplication1
         private static void Screen_Shown(object sender, System.EventArgs e)
         {
             System.Threading.Thread.Sleep(6000);
+
+            (sender as Screen).Exit();
         }
         
     }

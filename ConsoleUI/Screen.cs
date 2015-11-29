@@ -128,6 +128,8 @@ namespace ConsoleUI
 
         public void Exit()
         {
+            Hide();
+
             Controls.Exit();
         }
 
@@ -155,6 +157,8 @@ namespace ConsoleUI
             Console.Title = Name;
 
             Console.CursorVisible = false;
+
+            visible = true;
 
             Draw();
             Paint();

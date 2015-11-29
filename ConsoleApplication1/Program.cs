@@ -14,13 +14,14 @@ namespace ConsoleApplication1
             Console.BufferHeight = Console.WindowHeight;
             Console.BufferWidth = Console.WindowWidth;
 
-            //LoginScreen.SetupLoginScreen(screens);
-            //Labels.SetupLabelScreens(screens);
+            LoginScreen.SetupLoginScreen(screens);
+            LoadingScreen.SetupLoadingScreen(screens);
+            Labels.SetupLabelScreens(screens);
             //TextBoxes.SetupTextBoxScreens(screens);
             //ListBoxes.SetupListBoxScreens(screens);
             //KeyPressedEvents.SetupKeyPressedEventScreens(screens);
             //ProgressBars.SetupProgressBars(screens);
-            LoadingScreen.SetupLoadingScreen(screens);
+
 
             ShowScreens();
         }
