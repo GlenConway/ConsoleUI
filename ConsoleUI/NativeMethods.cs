@@ -8,6 +8,10 @@ namespace ConsoleUI
     {
         private const int STD_OUTPUT_HANDLE = -11;
 
+        private const int SWP_NOACTIVATE = 0x10;
+
+        private const int SWP_NOZORDER = 0x4;
+
         internal enum Color : short
         {
             Black = 0,
@@ -25,6 +29,15 @@ namespace ConsoleUI
             ForegroundMask = 0xf,
             BackgroundMask = 0xf0,
             ColorMask = 0xff
+        }
+
+        public static IntPtr Handle
+        {
+            get
+            {
+                //Initialize();
+                return GetConsoleWindow();
+            }
         }
 
         internal static IntPtr OutputHandle
@@ -57,6 +70,16 @@ namespace ConsoleUI
                 c = (Color)((int)c << 4);
 
             return c;
+        }
+
+        internal static RECT GetWindowRectangle()
+        {
+            RECT rct;
+
+            if (!GetWindowRect(Handle, out rct))
+                return rct;
+
+            return rct;
         }
 
         internal static void Paint(Buffer buffer)
@@ -92,11 +115,33 @@ namespace ConsoleUI
             }
         }
 
+        internal static void SetWindowPosition(int x, int y, int width, int height)
+        {
+            SetWindowPos(Handle, IntPtr.Zero, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
+        }
+
+        internal static void SetWindowPosition(int x, int y)
+        {
+            var rect = GetWindowRectangle();
+
+            SetWindowPos(Handle, IntPtr.Zero, x, y, rect.Right - rect.Left, rect.Bottom - rect.Top, SWP_NOZORDER | SWP_NOACTIVATE);
+        }
+
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern bool WriteConsoleOutput(IntPtr hConsoleOutput, CharInfo[] lpBuffer, Coord dwBufferSize, Coord dwBufferCoord, ref SmallRect lpWriteRegion);
 
+        [DllImport("kernel32")]
+        static extern IntPtr GetConsoleWindow();
+
         [DllImport("kernel32.dll", SetLastError = true)]
         static extern IntPtr GetStdHandle(int nStdHandle);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        [DllImport("user32")]
+        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, int flags);
 
         [StructLayout(LayoutKind.Explicit)]
         public struct CharInfo
@@ -130,6 +175,15 @@ namespace ConsoleUI
                 this.Y = Y;
             }
         };
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;        // x position of upper-left corner
+            public int Top;         // y position of upper-left corner
+            public int Right;       // x position of lower-right corner
+            public int Bottom;      // y position of lower-right corner
+        }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct SmallRect
