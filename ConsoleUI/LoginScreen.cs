@@ -14,7 +14,11 @@ namespace ConsoleUI
         private Label usernameLabel;
         private TextBox usernameTextBox;
 
-        public LoginScreen() : base("Login Screen")
+        public LoginScreen() : this("Login Screen")
+        {
+        }
+
+        public LoginScreen(string name) : base(name)
         {
             usernameLabel = new Label();
             passwordLabel = new Label();
