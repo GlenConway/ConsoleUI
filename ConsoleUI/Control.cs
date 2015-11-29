@@ -93,7 +93,7 @@ namespace ConsoleUI
                 owner = value;
             }
         }
-                
+
         public int Right
         {
             get
@@ -196,6 +196,16 @@ namespace ConsoleUI
             DrawShadow();
         }
 
+        public void Hide()
+        {
+            Visible = false;
+        }
+
+        public void Show()
+        {
+            Visible = true;
+        }
+
         protected virtual void DrawBorder()
         {
             if (BorderStyle == BorderStyle.None)
@@ -268,7 +278,7 @@ namespace ConsoleUI
         {
             if (Owner == null)
                 return;
-            
+
             var args = new CancelEventArgs();
 
             OnBeforePaint(args);
