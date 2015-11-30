@@ -17,6 +17,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{AC05BE03
 		nuget\ConsoleUI.nuspec = nuget\ConsoleUI.nuspec
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{69FDC341-B110-4817-9AC9-A50532CBB9E9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{A294CCB3-4578-467F-9032-2E3350DD0DD7}"
+	ProjectSection(SolutionItems) = preProject
+		docs\images\loading-screen.png = docs\images\loading-screen.png
+		docs\images\login-screen-1.png = docs\images\login-screen-1.png
+		docs\images\login-screen-2.png = docs\images\login-screen-2.png
+		docs\images\login-screen-3.png = docs\images\login-screen-3.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,5 +44,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A294CCB3-4578-467F-9032-2E3350DD0DD7} = {69FDC341-B110-4817-9AC9-A50532CBB9E9}
 	EndGlobalSection
 EndGlobal
