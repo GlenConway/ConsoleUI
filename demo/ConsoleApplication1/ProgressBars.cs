@@ -20,7 +20,7 @@ namespace ConsoleApplication1
             control1.Top = 0;
             control1.Width = 20;
             control1.BlockColor = ConsoleColor.Yellow;
-                                   
+
             screen.Controls.Add(control1);
 
             var control2 = new ProgressBar();
@@ -29,7 +29,7 @@ namespace ConsoleApplication1
             control2.Top = 10;
             control2.Width = 5;
             control2.BorderStyle = BorderStyle.Single;
-            
+
             screen.Controls.Add(control2);
 
             var control3 = new ProgressBar();
@@ -72,8 +72,6 @@ namespace ConsoleApplication1
                     screen.Footer.Text = string.Format("Value: {0}", control1.Value);
                 }
             };
-
-            
         }
     }
 }
