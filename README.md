@@ -18,3 +18,18 @@ A little library to provide UI components in Windows Console Applications a la D
   * Shadow
   * Login Screen
   * Loading Screen
+
+###Loading Screen
+![Docs](https://raw.githubusercontent.com/GlenConway/ConsoleUI/master/docs/images/loading-screen.png)
+
+###Login Screen
+![Docs](https://raw.githubusercontent.com/GlenConway/ConsoleUI/master/docs/images/login-screen-1.png)
+![Docs](https://raw.githubusercontent.com/GlenConway/ConsoleUI/master/docs/images/login-screen-2.png)
+![Docs](https://raw.githubusercontent.com/GlenConway/ConsoleUI/master/docs/images/login-screen-3.png)
+
+##Controls (To-Do)
+
+  * Multi-line TextBox
+  * Menus
+  * CheckBox
+  * Radio Button
