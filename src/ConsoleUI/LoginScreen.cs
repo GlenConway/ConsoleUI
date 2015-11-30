@@ -202,7 +202,7 @@ namespace ConsoleUI
             cancelButton.TextAlign = TextAlign.Center;
             cancelButton.HasShadow = true;
 
-            failureLabel.Width = rectangle.Width * 2;
+            failureLabel.Width = Width - 4;
             failureLabel.BorderStyle = BorderStyle.Double;
             failureLabel.HasShadow = true;
             failureLabel.Left = (Width / 2) - (failureLabel.Width / 2);
