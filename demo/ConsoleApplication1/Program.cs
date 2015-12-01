@@ -9,21 +9,20 @@ namespace ConsoleApplication1
 
         static void Main(string[] args)
         {
-            //Console.WindowHeight = 40;
-            //Console.WindowWidth = 132;
-            //Console.BufferHeight = Console.WindowHeight;
-            //Console.BufferWidth = Console.WindowWidth;
+            Console.WindowHeight = 40;
+            Console.WindowWidth = 132;
+            Console.BufferHeight = Console.WindowHeight;
+            Console.BufferWidth = Console.WindowWidth;
 
             Utils.SetWindowPosition(0, 0);
-
-            LoginScreen.SetupLoginScreen(screens);
-            LoadingScreen.SetupLoadingScreen(screens);
-            Labels.SetupLabelScreens(screens);
+                        
+            //Labels.SetupLabelScreens(screens);
             TextBoxes.SetupTextBoxScreens(screens);
             ListBoxes.SetupListBoxScreens(screens);
             KeyPressedEvents.SetupKeyPressedEventScreens(screens);
             ProgressBars.SetupProgressBars(screens);
-
+            LoginScreen.SetupLoginScreen(screens);
+            LoadingScreen.SetupLoadingScreen(screens);
 
             ShowScreens();
         }

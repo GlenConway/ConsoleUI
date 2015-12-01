@@ -9,6 +9,7 @@ namespace ConsoleUI
     public enum TextBoxType
     {
         Standard,
-        Password
+        Password,
+        Multiline
     }
 }

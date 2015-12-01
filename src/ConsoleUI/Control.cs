@@ -102,7 +102,7 @@ namespace ConsoleUI
             }
         }
 
-        public string Text
+        public virtual string Text
         {
             get
             {
@@ -189,8 +189,7 @@ namespace ConsoleUI
             if (!Visible)
                 return;
 
-            System.Diagnostics.Debug.WriteLine("{0}::{1}", this.GetType().Name, "Draw");
-
+            DrawBackground();
             DrawBorder();
             DrawControl();
             DrawShadow();
@@ -204,6 +203,20 @@ namespace ConsoleUI
         public void Show()
         {
             Visible = true;
+        }
+
+        protected virtual void DrawBackground()
+        {
+            if (!Visible)
+                return;
+
+            for (int x = Left; x < Right+1; x++)
+            {
+                for (int y = Top; y < Bottom+1; y++)
+                {
+                    Owner.Buffer.Write(x, y, 32, ForegroundColor, BackgroundColor);
+                }
+            }
         }
 
         protected virtual void DrawBorder()
@@ -220,17 +233,16 @@ namespace ConsoleUI
 
         protected virtual void DrawControl()
         {
-            System.Diagnostics.Debug.WriteLine("{0}::{1}", this.GetType().Name, "DrawControl");
-
             DrawText();
         }
 
         protected virtual void DrawShadow()
         {
-            if (!HasShadow)
+            if (!Visible)
                 return;
 
-            System.Diagnostics.Debug.WriteLine("{0}::{1}", this.GetType().Name, "DrawShadow");
+            if (!HasShadow)
+                return;
 
             var right = Right + 1;
             var bottom = Bottom + 1;
@@ -252,8 +264,6 @@ namespace ConsoleUI
 
         protected virtual void DrawText()
         {
-            System.Diagnostics.Debug.WriteLine("{0}::{1}", this.GetType().Name, "DrawText");
-
             Write(Text);
         }
 
@@ -267,6 +277,14 @@ namespace ConsoleUI
         {
             if (BeforePaint != null)
                 BeforePaint(this, args);
+        }
+
+        protected virtual string OnTruncateText(string text)
+        {
+            text = text.Remove(ClientWidth - 3, text.Length - ClientWidth + 3);
+            text += "...";
+
+            return text;
         }
 
         protected virtual void OnWrite(int x, int y, string text, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
@@ -304,8 +322,7 @@ namespace ConsoleUI
 
             if (text.Length > ClientWidth)
             {
-                text = text.Remove(ClientWidth - 3, text.Length - ClientWidth + 3);
-                text += "...";
+                text = OnTruncateText(text);
             }
 
             switch (TextAlign)
@@ -347,8 +364,6 @@ namespace ConsoleUI
 
         private void DrawDoubleBorder()
         {
-            System.Diagnostics.Debug.WriteLine("{0}::{1}", this.GetType().Name, "DrawDoubleBorder");
-
             Owner.Buffer.Write((short)Left, (short)Top, DoubleBorderTopLeft, ForegroundColor, BackgroundColor);
             Owner.Buffer.Write((short)Right, (short)Top, DoubleBorderTopRight, ForegroundColor, BackgroundColor);
             Owner.Buffer.Write((short)Left, (short)Bottom, DoubleBorderBottomLeft, ForegroundColor, BackgroundColor);
@@ -369,8 +384,6 @@ namespace ConsoleUI
 
         private void DrawSingleBorder()
         {
-            System.Diagnostics.Debug.WriteLine("{0}::{1}", this.GetType().Name, "DrawSingleBorder");
-
             Owner.Buffer.Write((short)Left, (short)Top, SingleBorderTopLeft, ForegroundColor, BackgroundColor);
             Owner.Buffer.Write((short)Right, (short)Top, SingleBorderTopRight, ForegroundColor, BackgroundColor);
             Owner.Buffer.Write((short)Left, (short)Bottom, SingleBorderBottomLeft, ForegroundColor, BackgroundColor);

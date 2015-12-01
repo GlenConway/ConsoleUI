@@ -5,7 +5,10 @@ namespace ConsoleUI
     public class TextBox : InputControl
     {
         public char PasswordCharacter = '*';
-        private string originalText;
+        private int CursorLeft;
+        private int CursorTop;
+        private bool Insert = true;
+        private string OriginalText;
 
         public TextBox()
         {
@@ -19,23 +22,66 @@ namespace ConsoleUI
 
         public event EventHandler<TextChangedEventArgs> TextChanged;
 
+        public string[] Lines { get; set; }
         public int MaxLength { get; set; }
-        public TextBoxType TextBoxType { get; set; }
-        public bool TreatEnterKeyAsTab { get; set; }
 
-        private int Position
+        public override string Text
         {
             get
             {
-                return Console.CursorLeft - ClientLeft;
+                if (Lines == null)
+                    return string.Empty;
+
+                return string.Join("", Lines);
+            }
+
+            set
+            {
+                Lines = value.Split(Environment.NewLine.ToCharArray());
             }
         }
 
+        public TextBoxType TextBoxType { get; set; }
+        public bool TreatEnterKeyAsTab { get; set; }
+
+        public bool WordWrap { get; set; }
+
         protected override void DrawText()
         {
-            if (Text == null || TextBoxType == TextBoxType.Standard)
+            if (Lines == null || Lines.Length == 0)
             {
-                base.DrawText();
+                Write(string.Empty);
+
+                return;
+            }
+
+            if (TextBoxType != TextBoxType.Password)
+            {
+                foreach (var line in Lines)
+                {
+                    if (string.IsNullOrEmpty(line))
+                        Write(string.Empty);
+                    else
+                    {
+                        var chunks = line.SplitIntoChunks(ClientWidth);
+
+                        foreach (var chunk in chunks)
+                        {
+                            Write(chunk);
+
+                            if (TextBoxType != TextBoxType.Multiline)
+                                return;
+
+                            Y++;
+
+                            if (Y >= ClientHeight)
+                                break;
+                        }
+
+                        if (Y >= ClientHeight)
+                            break;
+                    }
+                }
 
                 return;
             }
@@ -50,14 +96,10 @@ namespace ConsoleUI
 
             base.OnEnter();
 
-            Console.CursorLeft = ClientLeft;
-            Console.CursorTop = ClientTop;
+            SetCursorPosition();
 
-            if (!string.IsNullOrEmpty(Text))
-                Console.CursorLeft += Text.Length;
+            OriginalText = Text;
 
-            originalText = Text;
-            
             ReadKey();
         }
 
@@ -77,13 +119,18 @@ namespace ConsoleUI
 
         protected virtual void OnTextChanged()
         {
-            if (originalText == Text)
+            if (OriginalText == Text)
                 return;
 
             if (TextChanged != null)
-                TextChanged(this, new TextChangedEventArgs(originalText, Text));
+                TextChanged(this, new TextChangedEventArgs(OriginalText, Text));
 
-            originalText = Text;
+            OriginalText = Text;
+        }
+
+        protected override string OnTruncateText(string text)
+        {
+            return text;
         }
 
         protected override void ReadKey()
@@ -134,9 +181,22 @@ namespace ConsoleUI
                         {
                             if (!string.IsNullOrEmpty(Text))
                             {
-                                if (Position > 0)
-                                    // move the cursor to the left by one character
-                                    Console.SetCursorPosition(Position - 1, Console.CursorTop);
+                                if (CursorLeft > 0)
+                                {
+                                    CursorLeft--;
+
+                                    SetCursorPosition();
+                                }
+                                else
+                                {
+                                    if (CursorTop > 0)
+                                    {
+                                        CursorTop--;
+                                        CursorLeft = ClientWidth;
+
+                                        SetCursorPosition();
+                                    }
+                                }
                             }
 
                             break;
@@ -145,10 +205,45 @@ namespace ConsoleUI
                         {
                             if (!string.IsNullOrEmpty(Text))
                             {
-                                if (Position < Text.Length)
-                                    // move the cursor to the right by one character
-                                    Console.SetCursorPosition(Position + 1, Console.CursorTop);
+                                switch (TextBoxType)
+                                {
+                                    case TextBoxType.Multiline:
+                                        {
+                                            if (CursorTop < ClientHeight)
+                                            {
+                                                CursorTop++;
+                                                CursorLeft = 0;
+
+                                                SetCursorPosition();
+                                            }
+
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            if (CursorLeft < ClientWidth & CursorLeft < Text.Length)
+                                            {
+                                                CursorLeft++;
+
+                                                SetCursorPosition();
+                                            }
+
+                                            break;
+                                        }
+                                }
                             }
+
+                            break;
+                        }
+                    case ConsoleKey.End:
+                        {
+                            SetCursorPosition(Text.Length);
+
+                            break;
+                        }
+                    case ConsoleKey.Home:
+                        {
+                            SetCursorPosition(0);
 
                             break;
                         }
@@ -156,16 +251,52 @@ namespace ConsoleUI
                         {
                             if (!string.IsNullOrEmpty(Text))
                             {
+                                var index = CursorPositionToIndex();
+
+                                if (index == 0)
+                                    break;
+
                                 // remove one character from the list of characters
-                                Text = Text.Substring(0, Text.Length - 1);
+                                if (index == Text.Length)
+                                    Text = Text.Substring(0, index - 1);
+                                else
+                                    Text = Text.Substring(0, index - 1) + Text.Substring(index, Text.Length - index);
 
                                 // move the cursor to the left by one character
-                                Console.SetCursorPosition(Position - 1 + ClientLeft, Console.CursorTop);
-                                // replace it with space
-                                Console.Write(" ");
-                                // move the cursor to the left by one character again
-                                Console.SetCursorPosition(Position - 1 + ClientLeft, Console.CursorTop);
+                                CursorLeft--;
+                                SetCursorPosition();
+
+                                // redraw and repaint
+                                DrawText();
+                                Paint();
                             }
+
+                            break;
+                        }
+                    case ConsoleKey.Delete:
+                        {
+                            if (!string.IsNullOrEmpty(Text))
+                            {
+                                var index = CursorPositionToIndex();
+
+                                if (index == Text.Length)
+                                    break;
+
+                                // remove one character from the list of characters
+                                Text = Text.Substring(0, index) + Text.Substring(index + 1, Text.Length - index - 1);
+
+                                // redraw and repaint
+                                DrawText();
+                                Paint();
+                            }
+
+                            break;
+                        }
+                    case ConsoleKey.Insert:
+                        {
+                            Insert = !Insert;
+
+                            SetCursorSize();
 
                             break;
                         }
@@ -174,23 +305,82 @@ namespace ConsoleUI
                             if (char.IsControl(info.KeyChar))
                                 break;
 
-                            if (Text == null || ((Position < ClientWidth & Position < MaxLength) || (Position < ClientWidth & MaxLength == 0)))
+                            if (Text == null || ((CursorLeft < ClientWidth & Text.Length < MaxLength) || (CursorLeft < ClientWidth & MaxLength == 0)))
                             {
-                                if (Text == null || Position == Text.Length)
+                                if (Text == null || CursorLeft == Text.Length)
                                     Text += info.KeyChar;
                                 else
-                                    Text = Text.Insert(Position, info.KeyChar.ToString());
+                                {
+                                    var index = CursorPositionToIndex();
 
-                                if (TextBoxType == TextBoxType.Password)
-                                    Console.Write(PasswordCharacter);
-                                else
-                                    Console.Write(info.KeyChar);
+                                    if (Insert)
+                                        Text = Text.Insert(index, info.KeyChar.ToString());
+                                    else
+                                        Text = Text.Substring(0, index) + info.KeyChar.ToString() + Text.Substring(index + 1, Text.Length - index - 1);
+                                }
+
+                                CursorLeft++;
+
+                                if (CursorLeft >= ClientWidth)
+                                    if (TextBoxType == TextBoxType.Multiline)
+                                    {
+                                        CursorLeft = 0;
+
+                                        if (CursorTop < ClientHeight)
+                                            CursorTop++;
+                                    }
+                                    else
+                                        CursorLeft = ClientWidth;
+
+                                SetCursorPosition();
+
+                                // redraw and repaint
+                                DrawText();
+                                Paint();
                             }
 
                             break;
                         }
                 }
             }
+        }
+
+        private int CursorPositionToIndex()
+        {
+            return (CursorTop * ClientWidth) + CursorLeft;
+        }
+
+        private void SetCursorPosition(int index)
+        {
+            var top = index / ClientWidth;
+            var left = index - (top * ClientWidth);
+
+            CursorTop = top;
+            CursorLeft = left;
+
+            SetCursorPosition();
+        }
+
+        private void SetCursorPosition()
+        {
+            var offset = 0;
+
+            if (TextAlign == TextAlign.Center)
+                offset = (Width / 2) - (Text.Length / 2);
+
+            if (TextAlign == TextAlign.Right)
+                offset = Width - Text.Length - 1;
+
+            Console.CursorLeft = ClientLeft + CursorLeft + offset;
+            Console.CursorTop = ClientTop + CursorTop;
+        }
+
+        private void SetCursorSize()
+        {
+            if (Insert)
+                Console.CursorSize = 10;
+            else
+                Console.CursorSize = 100;
         }
     }
 }

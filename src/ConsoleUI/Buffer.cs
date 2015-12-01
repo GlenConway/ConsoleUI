@@ -50,19 +50,7 @@ namespace ConsoleUI
         }
 
         public int Width { get; private set; }
-
-        //public NativeMethods.CharInfo this[int x, int y]
-        //{
-        //    get
-        //    {
-        //        return buffer[GetIndex(x, y)];
-        //    }
-        //    set
-        //    {
-        //        buffer[GetIndex(x, y)] = value;
-        //    }
-        //}
-
+               
         public ConsoleColor GetBackgroundColor(int x, int y)
         {
             var index = (Width * y) + x;
