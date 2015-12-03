@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ConsoleUI
 {
@@ -14,7 +16,7 @@ namespace ConsoleUI
             NativeMethods.SetWindowPosition(x, y);
         }
 
-        public static IEnumerable<string> SplitIntoChunks(this string s, int length)
+        public static IList<string> SplitIntoChunks(this string s, int length)
         {
             var result = new List<string>();
 
@@ -29,12 +31,22 @@ namespace ConsoleUI
                     break;
                 }
                 else
-                    result.Add(s.Substring(start, length));
+                {
+                    var sub = s.Substring(start, length);
+
+                    result.Add(sub);
+                }
 
                 start += length;
             }
 
             return result;
+            //var charCount = 0;
+            //var lines = s.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            //return lines.GroupBy(w => (charCount += (((charCount % length) + w.Length + 1 >= length)
+            //                ? length - (charCount % length) : 0) + w.Length + 1) / length)
+            //            .Select(g => string.Join(" ", g.ToArray()))
+            //            .ToArray();
         }
     }
 }

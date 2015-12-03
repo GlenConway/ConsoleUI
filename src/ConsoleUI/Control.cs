@@ -352,14 +352,6 @@ namespace ConsoleUI
             }
 
             OnWrite(X + ClientLeft, Y + ClientTop, text, ForegroundColor, BackgroundColor);
-
-            //X += text.Length;
-
-            //if (X > ClientWidth)
-            //{
-            //    X = 0;
-            //    Y++;
-            //}
         }
 
         private void DrawDoubleBorder()

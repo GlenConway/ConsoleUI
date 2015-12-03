@@ -6,9 +6,9 @@ namespace ConsoleApplication1
     {
         internal static void SetupTextBoxScreens(ScreenCollection screens)
         {
-            BasicTextBoxScreen(screens);
-            SingleBorderTextBoxScreen(screens);
-            DoubleBorderTextBoxScreen(screens);
+            //BasicTextBoxScreen(screens);
+            //SingleBorderTextBoxScreen(screens);
+            //DoubleBorderTextBoxScreen(screens);
             MultilineBasicTextBoxScreen(screens);
         }
 
@@ -104,13 +104,13 @@ namespace ConsoleApplication1
             control1.Width = control1.MaxLength;
             control1.TreatEnterKeyAsTab = false;
             control1.Height = 5;
-            control1.Width = 40;
+            control1.Width = 10;
             control1.TextBoxType = TextBoxType.Multiline;
 
             var control2 = new TextBox();
 
             control2.Left = 0;
-            control2.Top = control1.Top + control1.Height;
+            control2.Top = control1.Top + control1.Height + 1;
             control2.Width = screen.Width;
             control2.TextAlign = TextAlign.Center;
             control2.Height = 8;
@@ -120,7 +120,7 @@ namespace ConsoleApplication1
             var control3 = new TextBox();
 
             control3.Left = 0;
-            control3.Top = control2.Top + control2.Height;
+            control3.Top = control2.Top + control2.Height + 1;
             control3.Height = 20;
             control3.Width = 20;
             control3.TextBoxType = TextBoxType.Multiline;
@@ -161,6 +161,7 @@ namespace ConsoleApplication1
             control3.MaxLength = 20;
             control3.Width = control3.MaxLength;
             control3.BorderStyle = BorderStyle.Single;
+            control3.TextAlign = TextAlign.Center;
 
             screen.Controls.Add(control1);
             screen.Controls.Add(control2);
