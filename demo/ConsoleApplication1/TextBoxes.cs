@@ -1,4 +1,5 @@
 ﻿using ConsoleUI;
+using System;
 
 namespace ConsoleApplication1
 {
@@ -98,14 +99,14 @@ namespace ConsoleApplication1
 
             var control1 = new TextBox();
 
-            control1.Left = 10;
+            control1.Left = 35;
             control1.Top = 0;
-            control1.MaxLength = 150;
             control1.Width = control1.MaxLength;
             control1.TreatEnterKeyAsTab = false;
-            control1.Height = 5;
-            control1.Width = 10;
+            control1.Height = 15;
+            control1.Width = 50;
             control1.TextBoxType = TextBoxType.Multiline;
+            control1.Text = "So if on advanced addition absolute received replying throwing he." + Environment.NewLine + "Delighted consisted newspaper of unfeeling as neglected so." + Environment.NewLine + "Tell size come hard mrs and four fond are. Of in commanded earnestly resources it. At quitting in strictly up wandered of relation answered felicity. Side need at in what dear ever upon if. Same down want joy neat ask pain help she. Alone three stuff use law walls fat asked. Near do that he help.";
 
             var control2 = new TextBox();
 
@@ -116,7 +117,8 @@ namespace ConsoleApplication1
             control2.Height = 8;
             control2.Width = 20;
             control2.TextBoxType = TextBoxType.Multiline;
-
+            control2.MaxLength = 150;
+            control2.Text = "Some text";
             var control3 = new TextBox();
 
             control3.Left = 0;

@@ -1,11 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ConsoleUI
 {
     public static class Utils
     {
+        public static string[] AssembleChunks(this List<string> s, int length)
+        {
+            var result = new List<string>();
+            var line = string.Empty;
+
+            foreach (var item in s)
+            {
+                if (item.Contains(Environment.NewLine))
+                {
+                    line += item;
+                    result.Add(line);
+                    line = string.Empty;
+                }
+                else
+                    line += item;
+            }
+
+            return result.ToArray();
+        }
+
         public static void SetWindowPosition(int x, int y, int width, int height)
         {
             NativeMethods.SetWindowPosition(x, y, width, height);
@@ -16,37 +35,55 @@ namespace ConsoleUI
             NativeMethods.SetWindowPosition(x, y);
         }
 
+        public static IList<string> SplitIntoChunks(this string[] s, int length)
+        {
+            var result = new List<string>();
+
+            for (int i = 0; i < s.Length; i++)
+            {
+                result.AddRange(s[i].SplitIntoChunks(length));
+            }
+
+            return result;
+        }
+
         public static IList<string> SplitIntoChunks(this string s, int length)
         {
             var result = new List<string>();
 
-            int start = 0;
+            var lines = s.Split(Environment.NewLine.ToCharArray());
 
-            while (start < s.Length)
+            if (lines.Length > 1)
             {
-                if ((start + length) >= s.Length)
+                foreach (var line in lines)
                 {
-                    result.Add(s.Substring(start));
-
-                    break;
+                    result.AddRange(line.SplitIntoChunks(length));
                 }
-                else
+            }
+            else
+            {
+                int start = 0;
+
+                while (start < s.Length)
                 {
-                    var sub = s.Substring(start, length);
+                    if (start + length >= s.Length)
+                    {
+                        result.Add(s.Substring(start) + Environment.NewLine);
 
-                    result.Add(sub);
+                        break;
+                    }
+                    else
+                    {
+                        var sub = s.Substring(start, length);
+
+                        result.Add(sub);
+
+                        start += length;
+                    }
                 }
-
-                start += length;
             }
 
             return result;
-            //var charCount = 0;
-            //var lines = s.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            //return lines.GroupBy(w => (charCount += (((charCount % length) + w.Length + 1 >= length)
-            //                ? length - (charCount % length) : 0) + w.Length + 1) / length)
-            //            .Select(g => string.Join(" ", g.ToArray()))
-            //            .ToArray();
         }
     }
 }
