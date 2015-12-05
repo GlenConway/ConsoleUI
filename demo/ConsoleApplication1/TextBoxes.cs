@@ -106,7 +106,7 @@ namespace ConsoleApplication1
             control1.Height = 15;
             control1.Width = 50;
             control1.TextBoxType = TextBoxType.Multiline;
-            control1.Text = "So if on advanced addition absolute received replying throwing he." + Environment.NewLine + "Delighted consisted newspaper of unfeeling as neglected so." + Environment.NewLine + "Tell size come hard mrs and four fond are. Of in commanded earnestly resources it. At quitting in strictly up wandered of relation answered felicity. Side need at in what dear ever upon if. Same down want joy neat ask pain help she. Alone three stuff use law walls fat asked. Near do that he help.";
+            control1.Text = "So if on advanced addition absolute received replying throwing he." + Environment.NewLine + Environment.NewLine + "Delighted consisted newspaper of unfeeling as neglected so." + Environment.NewLine + "Tell size come hard mrs and four fond are. Of in commanded earnestly resources it. At quitting in strictly up wandered of relation answered felicity. Side need at in what dear ever upon if. Same down want joy neat ask pain help she. Alone three stuff use law walls fat asked. Near do that he help.";
             control1.BorderStyle = BorderStyle.Double;
 
             var control2 = new TextBox();

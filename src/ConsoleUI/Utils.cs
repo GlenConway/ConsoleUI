@@ -9,24 +9,24 @@ namespace ConsoleUI
         {
             var result = new List<string>();
 
-            if (s == null)
+            if (s == null || s.Count == 0)
                 return result.ToArray();
 
-            var line = string.Empty;
+            string line = null;
 
             foreach (var item in s)
             {
-                if (item.EndsWith(Environment.NewLine))
+                if (item.Length < length)
                 {
                     line += item;
                     result.Add(line);
-                    line = string.Empty;
+                    line = null;
                 }
                 else
                     line += item;
             }
 
-            if (!string.IsNullOrEmpty(line))
+            if (line != null)
                 result.Add(line);
 
             return result.ToArray();
@@ -54,12 +54,12 @@ namespace ConsoleUI
 
             for (int i = 0; i < s.Length; i++)
             {
-                result.AddRange(s[i].SplitIntoChunks(length));
-
-                if (i < s.Length - 1)
-                    result[result.Count - 1] += Environment.NewLine;
+                if (s[i] == string.Empty)
+                    result.Add(string.Empty);
+                else
+                    result.AddRange(s[i].SplitIntoChunks(length));
             }
-            
+
             return result;
         }
 
@@ -106,6 +106,37 @@ namespace ConsoleUI
             }
 
             return result;
+        }
+
+        public static string[] SplitIntoLines(this string s)
+        {
+            var result = new List<string>();
+            var index = 0;
+
+            while (index >= 0)
+            {
+                index = s.IndexOf(Environment.NewLine);
+
+                if (index >= 0)
+                {
+                    result.Add(s.Substring(0, index));
+                    s = s.Substring(index + Environment.NewLine.Length, s.Length - index - Environment.NewLine.Length);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(s))
+                result.Add(s);
+
+            return result.ToArray();
+        }
+
+        public static string LeftPart(this string s, int index)
+        {
+            return s.Substring(0, index);
+        }
+        public static string RightPart(this string s, int index)
+        {
+            return s.Substring(index, s.Length - index);
         }
     }
 }

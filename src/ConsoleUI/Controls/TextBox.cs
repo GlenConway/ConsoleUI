@@ -91,7 +91,7 @@ namespace ConsoleUI
 
             set
             {
-                Lines = value.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                Lines = value.SplitIntoLines();
 
                 CheckMaxLength();
             }
@@ -114,34 +114,40 @@ namespace ConsoleUI
         /// <summary>
         /// Gets or sets the display line where the cursor is.
         /// </summary>
-        private string CurrentLine
+        private string CurrentDisplayLine
         {
             get
             {
                 if (DisplayLines.Count == 0)
                     return string.Empty;
 
-                return DisplayLines[CursorTop + LineOffset];
+                return DisplayLines[CurrentDisplayLineIndex];
             }
             set
             {
                 if (DisplayLines.Count == 0)
                     DisplayLines.Add(value);
                 else
-                    DisplayLines[CursorTop + LineOffset] = value;
+                    DisplayLines[CurrentDisplayLineIndex] = value;
 
                 RebuildLines();
             }
         }
-
-        /// <summary>
-        /// Gets the length of the current display line minus any new line characters
-        /// </summary>
-        private int CurrentLineLength
+        public int CurrentDisplayLineIndex
         {
             get
             {
-                return CurrentLine.Replace(Environment.NewLine, string.Empty).Length;
+                return CursorTop + LineOffset;
+            }
+        }
+        /// <summary>
+        /// Gets the length of the current display line minus any new line characters
+        /// </summary>
+        private int CurrentDisplayLineLength
+        {
+            get
+            {
+                return CurrentDisplayLine.Replace(Environment.NewLine, string.Empty).Length;
             }
         }
 
@@ -149,7 +155,7 @@ namespace ConsoleUI
         {
             get
             {
-                return (CursorTop + LineOffset) == DisplayLines.Count - 1;
+                return (CurrentDisplayLineIndex) == DisplayLines.Count - 1;
             }
         }
 
@@ -377,14 +383,14 @@ namespace ConsoleUI
 
         private void Backspace()
         {
-            if (CurrentLineLength == 0)
+            if (CurrentDisplayLineLength == 0)
                 return;
 
             // remove one character from the list of characters
-            if (CursorLeft == CurrentLineLength)
-                CurrentLine = CurrentLine.Substring(0, CursorLeft - 1);
+            if (CursorLeft == CurrentDisplayLineLength)
+                CurrentDisplayLine = CurrentDisplayLine.Substring(0, CursorLeft - 1);
             else
-                CurrentLine = CurrentLine.Substring(0, CursorLeft - 1) + CurrentLine.Substring(CursorLeft, CurrentLine.Length - CursorLeft);
+                CurrentDisplayLine = CurrentDisplayLine.Substring(0, CursorLeft - 1) + CurrentDisplayLine.Substring(CursorLeft, CurrentDisplayLine.Length - CursorLeft);
 
             // move the cursor to the left by one character
             MoveCursorLeft();
@@ -419,8 +425,8 @@ namespace ConsoleUI
             {
                 CursorTop--;
 
-                if (CursorLeft > CurrentLineLength)
-                    CursorLeft = CurrentLineLength;
+                if (CursorLeft > CurrentDisplayLineLength)
+                    CursorLeft = CurrentDisplayLineLength;
 
                 SetCursorPosition();
             }
@@ -430,8 +436,8 @@ namespace ConsoleUI
                 {
                     LineOffset--;
 
-                    if (CursorLeft > CurrentLineLength)
-                        CursorLeft = CurrentLineLength;
+                    if (CursorLeft > CurrentDisplayLineLength)
+                        CursorLeft = CurrentDisplayLineLength;
 
                     DrawText();
                     Paint();
@@ -441,13 +447,13 @@ namespace ConsoleUI
 
         private void Delete()
         {
-            if (CurrentLineLength == 0)
+            if (CurrentDisplayLineLength == 0)
                 return;
 
-            if (CursorLeft != CurrentLineLength)
+            if (CursorLeft != CurrentDisplayLineLength)
             {
                 // remove one character from the list of characters
-                CurrentLine = CurrentLine.Substring(0, CursorLeft) + CurrentLine.Substring(CursorLeft + 1, CurrentLine.Length - CursorLeft - 1);
+                CurrentDisplayLine = CurrentDisplayLine.Substring(0, CursorLeft) + CurrentDisplayLine.Substring(CursorLeft + 1, CurrentDisplayLine.Length - CursorLeft - 1);
 
                 // redraw and repaint
                 DrawText();
@@ -464,8 +470,8 @@ namespace ConsoleUI
             {
                 CursorTop++;
 
-                if (CursorLeft > CurrentLineLength)
-                    CursorLeft = CurrentLineLength;
+                if (CursorLeft > CurrentDisplayLineLength)
+                    CursorLeft = CurrentDisplayLineLength;
 
                 SetCursorPosition();
             }
@@ -475,8 +481,8 @@ namespace ConsoleUI
                 {
                     LineOffset++;
 
-                    if (CursorLeft > CurrentLineLength)
-                        CursorLeft = CurrentLineLength;
+                    if (CursorLeft > CurrentDisplayLineLength)
+                        CursorLeft = CurrentDisplayLineLength;
 
                     DrawText();
                     Paint();
@@ -489,11 +495,11 @@ namespace ConsoleUI
             if (CursorLeft > 0)
                 CursorLeft--;
             else
-            if (CursorTop + LineOffset > 0)
+            if (CurrentDisplayLineIndex > 0)
             {
                 DecrementCursorTop();
 
-                CursorLeft = CurrentLineLength;
+                CursorLeft = CurrentDisplayLineLength;
             }
 
             SetCursorPosition();
@@ -501,12 +507,12 @@ namespace ConsoleUI
 
         private void MoveCursorRight()
         {
-            if (CursorLeft < ClientWidth - 1 & CursorLeft < CurrentLineLength)
+            if (CursorLeft < ClientWidth - 1 & CursorLeft < CurrentDisplayLineLength)
                 CursorLeft++;
             else
             if (TextBoxType == TextBoxType.Multiline)
             {
-                if (CursorLeft == CurrentLineLength - 1 & !IsCursorOnLastLine)
+                if (CursorLeft == CurrentDisplayLineLength - 1 & !IsCursorOnLastLine)
                 {
                     IncrementCursorTop();
 
@@ -519,7 +525,7 @@ namespace ConsoleUI
 
         private void MoveToEnd()
         {
-            CursorLeft = CurrentLineLength;
+            CursorLeft = CurrentDisplayLineLength;
 
             SetCursorPosition();
         }
@@ -535,18 +541,40 @@ namespace ConsoleUI
         {
             if ((CursorLeft < ClientWidth & Text.Length < MaxLength) || (CursorLeft < ClientWidth & MaxLength == 0))
             {
-                var keyValue = info.Key == ConsoleKey.Enter ? Environment.NewLine : info.KeyChar.ToString();
+                var keyValue = info.KeyChar.ToString();
 
-                if (CursorLeft == CurrentLineLength)
+                // at the end of the line so add the character
+                if (CursorLeft == CurrentDisplayLineLength)
                 {
-                    CurrentLine = CurrentLine + keyValue;
+                    if (info.Key == ConsoleKey.Enter)
+                        DisplayLines.Insert(CurrentDisplayLineIndex + 1, string.Empty);
+                    else
+                        CurrentDisplayLine = CurrentDisplayLine + keyValue;
                 }
                 else
                 {
+                    var line = CurrentDisplayLine;
+
                     if (Insert)
-                        CurrentLine = CurrentLine.Insert(CursorLeft, keyValue);
+                    {
+                        if (info.Key == ConsoleKey.Enter)
+                        {
+                            CurrentDisplayLine = line.LeftPart(CursorLeft);
+                            DisplayLines.Insert(CurrentDisplayLineIndex + 1, line.RightPart(CursorLeft));
+                        }
+                        else
+                            CurrentDisplayLine = CurrentDisplayLine.Insert(CursorLeft, keyValue);
+                    }
                     else
-                        CurrentLine = CurrentLine.Substring(0, CursorLeft) + keyValue + CurrentLine.Substring(CursorLeft + 1, CurrentLine.Length - CursorLeft - 1);
+                    {
+                        if (info.Key == ConsoleKey.Enter)
+                        {
+                            CurrentDisplayLine = line.LeftPart(CursorLeft);
+                            DisplayLines.Insert(CurrentDisplayLineIndex + 1, line.RightPart(CursorLeft + 1));
+                        }
+                        else
+                            CurrentDisplayLine = line.LeftPart(CursorLeft) + keyValue + line.RightPart(CursorLeft + 1);
+                    }
                 }
 
                 if (info.Key == ConsoleKey.Enter)
