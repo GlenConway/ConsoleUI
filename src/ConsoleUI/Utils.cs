@@ -16,7 +16,7 @@ namespace ConsoleUI
 
             foreach (var item in s)
             {
-                if (item.Contains(Environment.NewLine))
+                if (item.EndsWith(Environment.NewLine))
                 {
                     line += item;
                     result.Add(line);
@@ -25,6 +25,9 @@ namespace ConsoleUI
                 else
                     line += item;
             }
+
+            if (!string.IsNullOrEmpty(line))
+                result.Add(line);
 
             return result.ToArray();
         }
@@ -39,6 +42,12 @@ namespace ConsoleUI
             NativeMethods.SetWindowPosition(x, y);
         }
 
+        /// <summary>
+        /// Splits an array of strings into a new list based on a maximum length, adding Environment.NewLine to the end of all but the last line group.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
         public static IList<string> SplitIntoChunks(this string[] s, int length)
         {
             var result = new List<string>();
@@ -46,11 +55,20 @@ namespace ConsoleUI
             for (int i = 0; i < s.Length; i++)
             {
                 result.AddRange(s[i].SplitIntoChunks(length));
-            }
 
+                if (i < s.Length - 1)
+                    result[result.Count - 1] += Environment.NewLine;
+            }
+            
             return result;
         }
 
+        /// <summary>
+        /// Returns a list of strings split by length.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
         public static IList<string> SplitIntoChunks(this string s, int length)
         {
             var result = new List<string>();
@@ -72,7 +90,7 @@ namespace ConsoleUI
                 {
                     if (start + length >= s.Length)
                     {
-                        result.Add(s.Substring(start) + Environment.NewLine);
+                        result.Add(s.Substring(start));
 
                         break;
                     }

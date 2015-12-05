@@ -119,7 +119,7 @@ namespace ConsoleApplication1
             control2.Width = 20;
             control2.TextBoxType = TextBoxType.Multiline;
             control2.MaxLength = 150;
-            control2.Text = "Some text";
+            
             var control3 = new TextBox();
 
             control3.Left = 0;
