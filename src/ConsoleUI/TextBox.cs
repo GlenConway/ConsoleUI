@@ -16,6 +16,8 @@ namespace ConsoleUI
         private int maxLength;
         private string OriginalText;
 
+        private TextBoxType textBoxType;
+
         public TextBox()
         {
             TabStop = true;
@@ -50,9 +52,7 @@ namespace ConsoleUI
             }
             set
             {
-                maxLength = value;
-
-                CheckMaxLength();
+                SetProperty(ref maxLength, value);
             }
         }
 
@@ -74,7 +74,17 @@ namespace ConsoleUI
             }
         }
 
-        public TextBoxType TextBoxType { get; set; }
+        public TextBoxType TextBoxType
+        {
+            get
+            {
+                return textBoxType;
+            }
+            set
+            {
+                SetProperty(ref textBoxType, value);
+            }
+        }
 
         public bool TreatEnterKeyAsTab { get; set; }
 
@@ -123,6 +133,17 @@ namespace ConsoleUI
             }
 
             Write(new string(PasswordCharacter, Text.Length));
+        }
+
+        protected override void HandlePropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "MaxLength")
+                CheckMaxLength();
+
+            if (e.PropertyName == "BorderStyle" || e.PropertyName == "Width")
+                RebuildLines();
+
+            base.HandlePropertyChanged(e);
         }
 
         protected override void OnEnter()
@@ -308,7 +329,7 @@ namespace ConsoleUI
                 // move the cursor to the left by one character
                 MoveCursorLeft();
 
-                Lines = DisplayLines.AssembleChunks(ClientWidth);
+                RebuildLines();
 
                 // redraw and repaint
                 DrawText();
@@ -376,7 +397,7 @@ namespace ConsoleUI
                     // remove one character from the list of characters
                     DisplayLines[CursorTop + lineOffset] = line.Substring(0, CursorLeft) + line.Substring(CursorLeft + 1, line.Length - CursorLeft - 1);
 
-                    Lines = DisplayLines.AssembleChunks(ClientWidth);
+                    RebuildLines();
 
                     // redraw and repaint
                     DrawText();
@@ -531,13 +552,17 @@ namespace ConsoleUI
                 }
 
                 SetCursorPosition();
-
-                Lines = DisplayLines.AssembleChunks(ClientWidth);
+                RebuildLines();
 
                 // redraw and repaint
                 DrawText();
                 Paint();
             }
+        }
+
+        private void RebuildLines()
+        {
+            Lines = DisplayLines.AssembleChunks(ClientWidth);
         }
 
         private void SetCursorPosition()

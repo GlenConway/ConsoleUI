@@ -8,6 +8,10 @@ namespace ConsoleUI
         public static string[] AssembleChunks(this List<string> s, int length)
         {
             var result = new List<string>();
+
+            if (s == null)
+                return result.ToArray();
+
             var line = string.Empty;
 
             foreach (var item in s)

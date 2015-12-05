@@ -9,6 +9,9 @@
 
         protected override void DrawControl()
         {
+            if (Owner == null)
+                return;
+
             var x = ClientLeft;
 
             while (x <= ClientRight)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Timers;
 
 namespace ConsoleUI
@@ -8,6 +9,8 @@ namespace ConsoleUI
         public ConsoleColor BlockColor = ConsoleColor.White;
         private int marqueeEnd;
         private int marqueeStart;
+        private int maximum;
+        private int minimum;
         private ProgressBarStyle progressBarStyle;
         private Timer timer;
 
@@ -24,9 +27,29 @@ namespace ConsoleUI
             timer.Elapsed += Timer_Elapsed;
         }
 
-        public int Maximum { get; set; }
+        public int Maximum
+        {
+            get
+            {
+                return maximum;
+            }
+            set
+            {
+                SetProperty(ref maximum, value);
+            }
+        }
 
-        public int Minimum { get; set; }
+        public int Minimum
+        {
+            get
+            {
+                return minimum;
+            }
+            set
+            {
+                SetProperty(ref minimum, value);
+            }
+        }
 
         public ProgressBarStyle ProgressBarStyle
         {
@@ -36,15 +59,7 @@ namespace ConsoleUI
             }
             set
             {
-                if (progressBarStyle != value)
-                {
-                    progressBarStyle = value;
-
-                    if (value == ProgressBarStyle.Marquee)
-                        timer.Start();
-                    else
-                        timer.Stop();
-                }
+                SetProperty(ref progressBarStyle, value);
             }
         }
 
@@ -56,13 +71,7 @@ namespace ConsoleUI
             }
             set
             {
-                if (this.value != value)
-                {
-                    this.value = value;
-
-                    DrawControl();
-                    Paint();
-                }
+                SetProperty(ref this.value, value);
             }
         }
 
@@ -101,12 +110,37 @@ namespace ConsoleUI
             if (!Visible)
                 return;
 
+            if (Owner == null)
+                return;
+
             if (ProgressBarStyle == ProgressBarStyle.Blocks)
                 DrawBlocks();
         }
 
+        protected override void HandlePropertyChanged(PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Value" || e.PropertyName == "Maximum" || e.PropertyName == "Minimum")
+            {
+                DrawControl();
+                Paint();
+            }
+
+            if (e.PropertyName == "ProgressBarStyle")
+            {
+                if (ProgressBarStyle == ProgressBarStyle.Marquee)
+                    timer.Start();
+                else
+                    timer.Stop();
+            }
+
+            base.HandlePropertyChanged(e);
+        }
+
         private void DrawBlocks()
         {
+            if (Owner == null)
+                return;
+
             var position = (int)(ClientWidth * Percent);
 
             for (int i = 0; i < ClientWidth; i++)
@@ -117,6 +151,9 @@ namespace ConsoleUI
 
         private void DrawMarquee()
         {
+            if (Owner == null)
+                return;
+
             if (!Owner.Visible)
                 return;
 

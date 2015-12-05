@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace ConsoleUI
 {
-    public class Control
+    public class Control : INotifyPropertyChanged
     {
         public ConsoleColor BackgroundColor = ConsoleColor.Blue;
         public ConsoleColor ForegroundColor = ConsoleColor.Gray;
@@ -18,6 +19,8 @@ namespace ConsoleUI
         private byte DoubleBorderTopLeft = 201;
         private byte DoubleBorderTopRight = 187;
         private byte DoubleBorderVertical = 186;
+        private int height;
+        private int left;
         private IControlContainer owner;
 
         private byte SingleBorderBottomLeft = 192;
@@ -28,17 +31,31 @@ namespace ConsoleUI
         private byte SingleBorderVertical = 179;
 
         private string text;
+        private TextAlign textAlign;
+        private int top;
         private bool visible;
+
+        private int width;
 
         public Control()
         {
             Height = 1;
             Visible = true;
+
+            PropertyChanged += (s, e) =>
+            {
+                HandlePropertyChanged(e);
+            };
         }
 
         public event EventHandler AfterPaint;
 
         public event CancelEventHandler BeforePaint;
+
+        /// <summary>
+        /// Multicast event for property change notifications.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public BorderStyle BorderStyle
         {
@@ -51,7 +68,7 @@ namespace ConsoleUI
                 if (value != BorderStyle.None && Height < 3)
                     Height = 3;
 
-                borderStyle = value;
+                SetProperty(ref borderStyle, value);
             }
         }
 
@@ -79,8 +96,29 @@ namespace ConsoleUI
             }
         }
 
-        public int Height { get; set; }
-        public int Left { get; set; }
+        public int Height
+        {
+            get
+            {
+                return height;
+            }
+            set
+            {
+                SetProperty(ref height, value);
+            }
+        }
+
+        public int Left
+        {
+            get
+            {
+                return left;
+            }
+            set
+            {
+                SetProperty(ref left, value);
+            }
+        }
 
         public IControlContainer Owner
         {
@@ -90,7 +128,7 @@ namespace ConsoleUI
             }
             set
             {
-                owner = value;
+                SetProperty(ref owner, value);
             }
         }
 
@@ -110,16 +148,33 @@ namespace ConsoleUI
             }
             set
             {
-                if (value != text)
-                {
-                    text = value;
-                }
+                SetProperty(ref text, value);
             }
         }
 
-        public TextAlign TextAlign { get; set; }
+        public TextAlign TextAlign
+        {
+            get
+            {
+                return textAlign;
+            }
+            set
+            {
+                SetProperty(ref textAlign, value);
+            }
+        }
 
-        public int Top { get; set; }
+        public int Top
+        {
+            get
+            {
+                return top;
+            }
+            set
+            {
+                SetProperty(ref top, value);
+            }
+        }
 
         public bool Visible
         {
@@ -129,20 +184,21 @@ namespace ConsoleUI
             }
             set
             {
-                if (value != visible)
-                {
-                    visible = value;
-
-                    if (visible)
-                    {
-                        Draw();
-                        Paint();
-                    }
-                }
+                SetProperty(ref visible, value);
             }
         }
 
-        public int Width { get; set; }
+        public int Width
+        {
+            get
+            {
+                return width;
+            }
+            set
+            {
+                SetProperty(ref width, value);
+            }
+        }
 
         protected int ClientHeight
         {
@@ -189,6 +245,9 @@ namespace ConsoleUI
             if (!Visible)
                 return;
 
+            if (Owner == null)
+                return;
+
             DrawBackground();
             DrawBorder();
             DrawControl();
@@ -210,9 +269,12 @@ namespace ConsoleUI
             if (!Visible)
                 return;
 
-            for (int x = Left; x < Right+1; x++)
+            if (Owner == null)
+                return;
+
+            for (int x = Left; x < Right + 1; x++)
             {
-                for (int y = Top; y < Bottom+1; y++)
+                for (int y = Top; y < Bottom + 1; y++)
                 {
                     Owner.Buffer.Write(x, y, 32, ForegroundColor, BackgroundColor);
                 }
@@ -221,6 +283,9 @@ namespace ConsoleUI
 
         protected virtual void DrawBorder()
         {
+            if (Owner == null)
+                return;
+
             if (BorderStyle == BorderStyle.None)
                 return;
 
@@ -244,6 +309,9 @@ namespace ConsoleUI
             if (!HasShadow)
                 return;
 
+            if (Owner == null)
+                return;
+
             var right = Right + 1;
             var bottom = Bottom + 1;
 
@@ -264,7 +332,28 @@ namespace ConsoleUI
 
         protected virtual void DrawText()
         {
+            if (Owner == null)
+                return;
+
             Write(Text);
+        }
+
+        protected virtual void HandlePropertyChanged(PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Height" || e.PropertyName == "Width" || e.PropertyName == "Left" || e.PropertyName == "Top")
+            {
+                Draw();
+                Paint();
+            }
+
+            if (e.PropertyName == "Visible")
+            {
+                if (Visible)
+                {
+                    Draw();
+                    Paint();
+                }
+            }
         }
 
         protected virtual void OnAfterPaint()
@@ -279,6 +368,24 @@ namespace ConsoleUI
                 BeforePaint(this, args);
         }
 
+        /// <summary>
+        ///     Notifies listeners that a property value has changed.
+        /// </summary>
+        /// <param name="propertyName">
+        ///     Name of the property used to notify listeners.  This
+        ///     value is optional and can be provided automatically when invoked from compilers
+        ///     that support <see cref="CallerMemberNameAttribute" />.
+        /// </param>
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChangedEventHandler eventHandler = this.PropertyChanged;
+
+            if (eventHandler == null)
+                return;
+
+            eventHandler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         protected virtual string OnTruncateText(string text)
         {
             text = text.Remove(ClientWidth - 3, text.Length - ClientWidth + 3);
@@ -289,6 +396,9 @@ namespace ConsoleUI
 
         protected virtual void OnWrite(int x, int y, string text, ConsoleColor foregroundColor, ConsoleColor backgroundColor)
         {
+            if (Owner == null)
+                return;
+
             Owner.Buffer.Write((short)x, (short)y, text, foregroundColor, backgroundColor);
         }
 
@@ -312,8 +422,39 @@ namespace ConsoleUI
             OnAfterPaint();
         }
 
+        /// <summary>
+        ///     Checks if a property already matches a desired value.  Sets the property and
+        ///     notifies listeners only when necessary.
+        /// </summary>
+        /// <typeparam name="T">Type of the property.</typeparam>
+        /// <param name="storage">Reference to a property with both getter and setter.</param>
+        /// <param name="value">Desired value for the property.</param>
+        /// <param name="propertyName">
+        ///     Name of the property used to notify listeners.  This
+        ///     value is optional and can be provided automatically when invoked from compilers that
+        ///     support CallerMemberName.
+        /// </param>
+        /// <returns>
+        ///     True if the value was changed, false if the existing value matched the
+        ///     desired value.
+        /// </returns>
+        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (Equals(storage, value))
+            {
+                return false;
+            }
+
+            storage = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
         protected void Write(string text)
         {
+            if (Owner == null)
+                return;
+
             if (ClientWidth < 1)
                 return;
 
@@ -356,6 +497,9 @@ namespace ConsoleUI
 
         private void DrawDoubleBorder()
         {
+            if (Owner == null)
+                return;
+
             Owner.Buffer.Write((short)Left, (short)Top, DoubleBorderTopLeft, ForegroundColor, BackgroundColor);
             Owner.Buffer.Write((short)Right, (short)Top, DoubleBorderTopRight, ForegroundColor, BackgroundColor);
             Owner.Buffer.Write((short)Left, (short)Bottom, DoubleBorderBottomLeft, ForegroundColor, BackgroundColor);
@@ -376,6 +520,9 @@ namespace ConsoleUI
 
         private void DrawSingleBorder()
         {
+            if (Owner == null)
+                return;
+
             Owner.Buffer.Write((short)Left, (short)Top, SingleBorderTopLeft, ForegroundColor, BackgroundColor);
             Owner.Buffer.Write((short)Right, (short)Top, SingleBorderTopRight, ForegroundColor, BackgroundColor);
             Owner.Buffer.Write((short)Left, (short)Bottom, SingleBorderBottomLeft, ForegroundColor, BackgroundColor);

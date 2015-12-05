@@ -21,6 +21,9 @@ namespace ConsoleUI
             if (!HasShadow)
                 return;
 
+            if (Owner == null)
+                return;
+
             for (int i = Left + 1; i <= Right + 1; i++)
             {
                 Owner.Buffer.Write((short)i, (short)Bottom + 1, 223, ConsoleColor.Black);
@@ -59,6 +62,7 @@ namespace ConsoleUI
             DrawText();
             Paint();
         }
+
         protected override void ReadKey()
         {
             while (HasFocus)
