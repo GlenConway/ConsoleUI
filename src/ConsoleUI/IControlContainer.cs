@@ -6,5 +6,8 @@
         bool Visible { get; }
 
         void Paint();
+
+        void SuspendLayout();
+        void ResumeLayout();
     }
 }

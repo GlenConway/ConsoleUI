@@ -39,6 +39,8 @@ namespace ConsoleUI
 
         public Control()
         {
+            LayoutSuspended = true;
+
             Height = 1;
             Visible = true;
 
@@ -224,12 +226,18 @@ namespace ConsoleUI
             }
         }
 
-        protected int ClientWidth
+        protected virtual int ClientWidth
         {
             get
             {
                 return Width - (Offset * 2);
             }
+        }
+
+        protected bool LayoutSuspended
+        {
+            get;
+            set;
         }
 
         protected int Offset
@@ -240,12 +248,26 @@ namespace ConsoleUI
             }
         }
 
+        protected bool ShouldDraw
+        {
+            get
+            {
+                if (LayoutSuspended)
+                    return false;
+
+                if (!Visible)
+                    return false;
+
+                if (Owner == null)
+                    return false;
+
+                return true;
+            }
+        }
+
         public void Draw()
         {
-            if (!Visible)
-                return;
-
-            if (Owner == null)
+            if (!ShouldDraw)
                 return;
 
             DrawBackground();
@@ -259,17 +281,24 @@ namespace ConsoleUI
             Visible = false;
         }
 
+        public void ResumeLayout()
+        {
+            LayoutSuspended = false;
+        }
+
         public void Show()
         {
             Visible = true;
         }
 
+        public void SuspendLayout()
+        {
+            LayoutSuspended = true;
+        }
+
         protected virtual void DrawBackground()
         {
-            if (!Visible)
-                return;
-
-            if (Owner == null)
+            if (!ShouldDraw)
                 return;
 
             for (int x = Left; x < Right + 1; x++)
@@ -283,7 +312,7 @@ namespace ConsoleUI
 
         protected virtual void DrawBorder()
         {
-            if (Owner == null)
+            if (!ShouldDraw)
                 return;
 
             if (BorderStyle == BorderStyle.None)
@@ -298,18 +327,18 @@ namespace ConsoleUI
 
         protected virtual void DrawControl()
         {
+            if (!ShouldDraw)
+                return;
+
             DrawText();
         }
 
         protected virtual void DrawShadow()
         {
-            if (!Visible)
-                return;
-
             if (!HasShadow)
                 return;
 
-            if (Owner == null)
+            if (!ShouldDraw)
                 return;
 
             var right = Right + 1;
@@ -332,7 +361,7 @@ namespace ConsoleUI
 
         protected virtual void DrawText()
         {
-            if (Owner == null)
+            if (!ShouldDraw)
                 return;
 
             Write(Text);
@@ -404,7 +433,7 @@ namespace ConsoleUI
 
         protected virtual void Paint()
         {
-            if (Owner == null)
+            if (!ShouldDraw)
                 return;
 
             var args = new CancelEventArgs();
@@ -452,7 +481,7 @@ namespace ConsoleUI
 
         protected void Write(string text)
         {
-            if (Owner == null)
+            if (!ShouldDraw)
                 return;
 
             if (ClientWidth < 1)
@@ -497,7 +526,7 @@ namespace ConsoleUI
 
         private void DrawDoubleBorder()
         {
-            if (Owner == null)
+            if (!ShouldDraw)
                 return;
 
             Owner.Buffer.Write((short)Left, (short)Top, DoubleBorderTopLeft, ForegroundColor, BackgroundColor);
@@ -520,7 +549,7 @@ namespace ConsoleUI
 
         private void DrawSingleBorder()
         {
-            if (Owner == null)
+            if (!ShouldDraw)
                 return;
 
             Owner.Buffer.Write((short)Left, (short)Top, SingleBorderTopLeft, ForegroundColor, BackgroundColor);

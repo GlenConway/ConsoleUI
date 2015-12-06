@@ -21,7 +21,7 @@ namespace ConsoleUI
         //private byte ScrollBarMedium = 177;
         private int startIndex = 0;
 
-        public ListBox()
+        public ListBox() : base()
         {
             TabStop = true;
         }
@@ -90,6 +90,9 @@ namespace ConsoleUI
 
         protected override void DrawControl()
         {
+            if (!ShouldDraw)
+                return;
+
             var maxRows = ClientHeight;
 
             if (maxRows > Items.Count)
@@ -106,6 +109,8 @@ namespace ConsoleUI
 
             var y = 0;
 
+            var labels = new List<Label>();
+
             var width = HasVerticalScrollBar ? ClientWidth - 1 : ClientWidth;
 
             for (int i = startIndex; i < endIndex; i++)
@@ -119,25 +124,18 @@ namespace ConsoleUI
                 label.BackgroundColor = i == CurrentIndex ? (HasFocus ? SelectedBackgroundColor : SelectedNoFocusBackgroundColor) : BackgroundColor;
                 label.ForegroundColor = i == CurrentIndex ? (HasFocus ? SelectedForegroundColor : SelectedNoFocusForegroundColor) : ForegroundColor;
 
-                label.Draw();
+                labels.Add(label);
 
                 y++;
             }
 
-            for (int i = y; i < ClientHeight; i++)
+            for (int i = 0; i < labels.Count; i++)
             {
-                var label = new Label();
-                label.Owner = Owner;
-                label.Width = width;
-                label.Left = ClientLeft;
-                label.Top = ClientTop + i;
-
-                label.BackgroundColor = BackgroundColor;
-                label.ForegroundColor = ForegroundColor;
-
+                var label = labels[i];
+                label.ResumeLayout();
                 label.Draw();
             }
-
+           
             DrawVerticalScrollBar();
 
             Paint();
@@ -264,6 +262,9 @@ namespace ConsoleUI
 
         private void DrawVerticalScrollBar()
         {
+            if (!ShouldDraw)
+                return;
+
             if (!HasVerticalScrollBar)
                 return;
 

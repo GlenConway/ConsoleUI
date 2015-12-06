@@ -21,7 +21,7 @@ namespace ConsoleUI
             if (!HasShadow)
                 return;
 
-            if (Owner == null)
+            if (!ShouldDraw)
                 return;
 
             for (int i = Left + 1; i <= Right + 1; i++)

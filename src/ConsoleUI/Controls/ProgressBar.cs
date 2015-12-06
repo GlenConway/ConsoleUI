@@ -107,10 +107,7 @@ namespace ConsoleUI
 
         protected override void DrawControl()
         {
-            if (!Visible)
-                return;
-
-            if (Owner == null)
+            if (!ShouldDraw)
                 return;
 
             if (ProgressBarStyle == ProgressBarStyle.Blocks)
@@ -138,7 +135,7 @@ namespace ConsoleUI
 
         private void DrawBlocks()
         {
-            if (Owner == null)
+            if (!ShouldDraw)
                 return;
 
             var position = (int)(ClientWidth * Percent);
@@ -151,7 +148,7 @@ namespace ConsoleUI
 
         private void DrawMarquee()
         {
-            if (Owner == null)
+            if (!ShouldDraw)
                 return;
 
             if (!Owner.Visible)

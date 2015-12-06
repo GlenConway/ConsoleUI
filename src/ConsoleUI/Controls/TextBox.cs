@@ -171,6 +171,9 @@ namespace ConsoleUI
 
         protected override void DrawText()
         {
+            if (!ShouldDraw)
+                return;
+
             if (DisplayLines == null || DisplayLines.Count == 0)
             {
                 Write(string.Empty);

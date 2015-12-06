@@ -5,7 +5,12 @@ namespace ConsoleUI
     public abstract class InputControl : Control
     {
         public ConsoleColor FocusBackgroundColor = ConsoleColor.Blue;
+
         public ConsoleColor FocusForegroundColor = ConsoleColor.Gray;
+
+        public InputControl() : base()
+        {
+        }
 
         public event EventHandler Enter;
 

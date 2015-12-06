@@ -21,7 +21,7 @@ namespace ConsoleApplication1
             control1.Height = screen.Height - 1;
             control1.BorderStyle = BorderStyle.Double;
 
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 150; i++)
             {
                 control1.Items.Add(string.Format("Item {0} - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua", i + 1));
             }

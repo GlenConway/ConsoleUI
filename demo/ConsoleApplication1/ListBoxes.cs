@@ -14,7 +14,7 @@ namespace ConsoleApplication1
         private static void BasicListBoxScreen(ScreenCollection screens)
         {
             var screen = new Screen("Basic List Boxes");
-
+            
             var control1 = new ListBox();
 
             control1.Left = 0;
@@ -62,6 +62,7 @@ namespace ConsoleApplication1
         private static void SingleBorderListBoxScreen(ScreenCollection screens)
         {
             var screen = new Screen("Single Border List Boxes");
+            screen.SuspendLayout();
 
             var control1 = new ListBox();
 

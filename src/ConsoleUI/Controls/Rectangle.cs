@@ -9,7 +9,7 @@
 
         protected override void DrawControl()
         {
-            if (Owner == null)
+            if (!ShouldDraw)
                 return;
 
             var x = ClientLeft;

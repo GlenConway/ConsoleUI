@@ -68,6 +68,9 @@ namespace ConsoleUI
 
         public void Show(int index)
         {
+            if (index > 0)
+                this[index - 1].Exit();
+
             this[index].Show();
         }
 

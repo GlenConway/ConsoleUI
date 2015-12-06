@@ -154,6 +154,8 @@ namespace ConsoleUI
 
         public virtual void Show()
         {
+            ResumeLayout();
+
             Console.Title = Name;
 
             Console.CursorVisible = false;
@@ -170,6 +172,8 @@ namespace ConsoleUI
 
         internal void Show(InputControl focus)
         {
+            ResumeLayout();
+
             Console.Title = Name;
 
             Console.CursorVisible = false;
@@ -210,6 +214,22 @@ namespace ConsoleUI
 
             if (Shown != null)
                 Shown(this, new EventArgs());
+        }
+
+        public void SuspendLayout()
+        {
+            foreach (var control in Controls)
+                control.SuspendLayout();
+
+            Footer.SuspendLayout();
+        }
+
+        public void ResumeLayout()
+        {
+            foreach (var control in Controls)
+                control.ResumeLayout();
+
+            Footer.ResumeLayout();
         }
     }
 }
