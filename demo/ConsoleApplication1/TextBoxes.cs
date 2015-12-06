@@ -7,9 +7,9 @@ namespace ConsoleApplication1
     {
         internal static void SetupTextBoxScreens(ScreenCollection screens)
         {
-            //BasicTextBoxScreen(screens);
-            //SingleBorderTextBoxScreen(screens);
-            //DoubleBorderTextBoxScreen(screens);
+            BasicTextBoxScreen(screens);
+            SingleBorderTextBoxScreen(screens);
+            DoubleBorderTextBoxScreen(screens);
             MultilineBasicTextBoxScreen(screens);
         }
 
@@ -115,20 +115,21 @@ namespace ConsoleApplication1
             control2.Top = control1.Top + control1.Height + 1;
             control2.Width = screen.Width;
             control2.TextAlign = TextAlign.Center;
-            control2.Height = 8;
+            control2.Height = 5;
             control2.Width = 20;
             control2.TextBoxType = TextBoxType.Multiline;
             control2.MaxLength = 150;
             
             var control3 = new TextBox();
 
-            control3.Left = 0;
-            control3.Top = control2.Top + control2.Height + 1;
+            control3.Left = 35;
+            control3.Top = control2.Top ;
             control3.Height = 20;
-            control3.Width = 20;
+            control3.Width = 50;
             control3.TextBoxType = TextBoxType.Multiline;
-            control3.Text = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?";
+            control3.Text = Properties.Resources.LongText;
             control3.BorderStyle = BorderStyle.Double;
+
             screen.Controls.Add(control1);
             screen.Controls.Add(control2);
             screen.Controls.Add(control3);

@@ -29,6 +29,14 @@ namespace ConsoleUI
 
         public event EventHandler<TextChangedEventArgs> TextChanged;
 
+        public int CurrentDisplayLineIndex
+        {
+            get
+            {
+                return CursorTop + LineOffset;
+            }
+        }
+
         public bool Insert
         {
             get
@@ -133,13 +141,7 @@ namespace ConsoleUI
                 RebuildLines();
             }
         }
-        public int CurrentDisplayLineIndex
-        {
-            get
-            {
-                return CursorTop + LineOffset;
-            }
-        }
+
         /// <summary>
         /// Gets the length of the current display line minus any new line characters
         /// </summary>
@@ -151,19 +153,19 @@ namespace ConsoleUI
             }
         }
 
-        private bool IsCursorOnLastLine
-        {
-            get
-            {
-                return (CurrentDisplayLineIndex) == DisplayLines.Count - 1;
-            }
-        }
-
         private List<string> DisplayLines
         {
             get
             {
                 return displayLines;
+            }
+        }
+
+        private bool IsCursorOnLastLine
+        {
+            get
+            {
+                return (CurrentDisplayLineIndex) == DisplayLines.Count - 1;
             }
         }
 
@@ -388,9 +390,29 @@ namespace ConsoleUI
 
             // remove one character from the list of characters
             if (CursorLeft == CurrentDisplayLineLength)
-                CurrentDisplayLine = CurrentDisplayLine.Substring(0, CursorLeft - 1);
+                CurrentDisplayLine = CurrentDisplayLine.LeftPart(CursorLeft - 1);
             else
-                CurrentDisplayLine = CurrentDisplayLine.Substring(0, CursorLeft - 1) + CurrentDisplayLine.Substring(CursorLeft, CurrentDisplayLine.Length - CursorLeft);
+            {
+                if (CursorLeft == 0)
+                {
+                    if (DecrementCursorTop())
+                    {
+                        MoveToEnd();
+
+                        var nextLine = DisplayLines[CurrentDisplayLineIndex + 1];
+                        var newLine = CurrentDisplayLine.LeftPart(CursorLeft - 1);
+
+                        //DisplayLines.RemoveAt(CurrentDisplayLineIndex + 1);
+                        DisplayLines[CurrentDisplayLineIndex + 1] = string.Empty;
+
+                        CurrentDisplayLine = newLine + nextLine;
+                    }
+                }
+                else
+                {
+                    CurrentDisplayLine = CurrentDisplayLine.Substring(0, CursorLeft - 1) + CurrentDisplayLine.Substring(CursorLeft, CurrentDisplayLine.Length - CursorLeft);
+                }
+            }
 
             // move the cursor to the left by one character
             MoveCursorLeft();
@@ -416,10 +438,10 @@ namespace ConsoleUI
                 }
         }
 
-        private void DecrementCursorTop()
+        private bool DecrementCursorTop()
         {
             if (TextBoxType != TextBoxType.Multiline)
-                return;
+                return false;
 
             if (CursorTop > 0)
             {
@@ -429,36 +451,47 @@ namespace ConsoleUI
                     CursorLeft = CurrentDisplayLineLength;
 
                 SetCursorPosition();
+
+                return true;
             }
-            else
+
+            if (LineOffset > 0)
             {
-                if (LineOffset > 0)
-                {
-                    LineOffset--;
+                LineOffset--;
 
-                    if (CursorLeft > CurrentDisplayLineLength)
-                        CursorLeft = CurrentDisplayLineLength;
+                if (CursorLeft > CurrentDisplayLineLength)
+                    CursorLeft = CurrentDisplayLineLength;
 
-                    DrawText();
-                    Paint();
-                }
+                DrawText();
+                Paint();
+
+                return true;
             }
+
+            return false;
         }
 
         private void Delete()
         {
-            if (CurrentDisplayLineLength == 0)
+            if (CurrentDisplayLineLength == 0 & TextBoxType != TextBoxType.Multiline)
                 return;
 
             if (CursorLeft != CurrentDisplayLineLength)
             {
-                // remove one character from the list of characters
-                CurrentDisplayLine = CurrentDisplayLine.Substring(0, CursorLeft) + CurrentDisplayLine.Substring(CursorLeft + 1, CurrentDisplayLine.Length - CursorLeft - 1);
+                var line = CurrentDisplayLine;
 
-                // redraw and repaint
-                DrawText();
-                Paint();
+                // remove one character from the list of characters
+                CurrentDisplayLine = CurrentDisplayLine.Remove(CursorLeft, 1);
             }
+            else
+            {
+                if (CurrentDisplayLineIndex < DisplayLines.Count)
+                    DisplayLines.RemoveAt(CurrentDisplayLineIndex);
+            }
+
+            // redraw and repaint
+            DrawText();
+            Paint();
         }
 
         private void IncrementCursorTop()
