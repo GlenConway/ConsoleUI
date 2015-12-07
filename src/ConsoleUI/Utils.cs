@@ -7,6 +7,9 @@ namespace ConsoleUI
     {
         public static string[] AssembleChunks(this List<string> s, int length)
         {
+            if (s == null)
+                return new string[0];
+
             var result = new List<string>();
 
             if (s == null || s.Count == 0)
@@ -32,6 +35,22 @@ namespace ConsoleUI
             return result.ToArray();
         }
 
+        public static string LeftPart(this string s, int index)
+        {
+            if (s == null)
+                return string.Empty;
+
+            return s.Substring(0, index);
+        }
+
+        public static string RightPart(this string s, int index)
+        {
+            if (s == null)
+                return string.Empty;
+
+            return s.Substring(index, s.Length - index);
+        }
+
         public static void SetWindowPosition(int x, int y, int width, int height)
         {
             NativeMethods.SetWindowPosition(x, y, width, height);
@@ -50,6 +69,9 @@ namespace ConsoleUI
         /// <returns></returns>
         public static IList<string> SplitIntoChunks(this string[] s, int length)
         {
+            if (s == null)
+                return new List<string>();
+
             var result = new List<string>();
 
             for (int i = 0; i < s.Length; i++)
@@ -71,6 +93,9 @@ namespace ConsoleUI
         /// <returns></returns>
         public static IList<string> SplitIntoChunks(this string s, int length)
         {
+            if (s == null)
+                return new List<string>();
+
             var result = new List<string>();
 
             var lines = s.Split(Environment.NewLine.ToCharArray());
@@ -111,6 +136,10 @@ namespace ConsoleUI
         public static string[] SplitIntoLines(this string s)
         {
             var result = new List<string>();
+
+            if (s == null)
+                return new string[0];
+
             var index = 0;
 
             while (index >= 0)
@@ -128,15 +157,6 @@ namespace ConsoleUI
                 result.Add(s);
 
             return result.ToArray();
-        }
-
-        public static string LeftPart(this string s, int index)
-        {
-            return s.Substring(0, index);
-        }
-        public static string RightPart(this string s, int index)
-        {
-            return s.Substring(index, s.Length - index);
         }
     }
 }

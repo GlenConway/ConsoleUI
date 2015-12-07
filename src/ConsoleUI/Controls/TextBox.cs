@@ -102,6 +102,9 @@ namespace ConsoleUI
                 Lines = value.SplitIntoLines();
 
                 CheckMaxLength();
+
+                if (CursorLeft > CurrentDisplayLineLength)
+                    CursorLeft = CurrentDisplayLineLength;
             }
         }
 

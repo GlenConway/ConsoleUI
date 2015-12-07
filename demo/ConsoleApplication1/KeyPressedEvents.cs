@@ -35,6 +35,7 @@ namespace ConsoleApplication1
             textBox.Top = (screen.Height / 2) - (textBox.Height / 2);
             textBox.MaxLength = 6;
             textBox.BackgroundColor = System.ConsoleColor.DarkGreen;
+            textBox.FocusBackgroundColor = System.ConsoleColor.DarkGreen;
             textBox.Visible = false;
             textBox.TreatEnterKeyAsTab = false;
             textBox.HasShadow = true;
