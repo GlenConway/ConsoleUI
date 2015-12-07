@@ -22,7 +22,7 @@ namespace ConsoleApplication1
             // sleep for a bit before exiting.
             screen.Shown += (s, e) =>
             {
-                System.Threading.Thread.Sleep(6000);
+                System.Threading.Thread.Sleep(3000);
 
                 (s as Screen).Exit();
             };

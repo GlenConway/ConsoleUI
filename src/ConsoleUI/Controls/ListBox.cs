@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ConsoleUI
 {
-    public class ListBox : InputControl
+    public class ListBox : Control
     {
         public int CurrentIndex = 0;
 

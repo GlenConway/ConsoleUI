@@ -21,8 +21,9 @@ namespace ConsoleApplication1
             //ListBoxes.SetupListBoxScreens(screens);
             //KeyPressedEvents.SetupKeyPressedEventScreens(screens);
             //ProgressBars.SetupProgressBars(screens);
-            LoginScreen.SetupLoginScreen(screens);
+            //LoginScreen.SetupLoginScreen(screens);
             //LoadingScreen.SetupLoadingScreen(screens);
+            Menus.SetupMenu(screens);
 
             ShowScreens();
         }

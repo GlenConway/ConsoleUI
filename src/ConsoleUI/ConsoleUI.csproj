@@ -43,6 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\Menu.cs" />
+    <Compile Include="Controls\MenuBar.cs" />
+    <Compile Include="Controls\MenuItem.cs" />
     <Compile Include="Enums\BorderStyle.cs" />
     <Compile Include="Buffer.cs" />
     <Compile Include="Controls\Button.cs" />

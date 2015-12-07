@@ -7,6 +7,8 @@ namespace ConsoleUI
     public class Control : INotifyPropertyChanged
     {
         public ConsoleColor BackgroundColor = ConsoleColor.Blue;
+        public ConsoleColor FocusBackgroundColor = ConsoleColor.Blue;
+        public ConsoleColor FocusForegroundColor = ConsoleColor.Gray;
         public ConsoleColor ForegroundColor = ConsoleColor.Gray;
 
         public bool HasShadow = false;
@@ -19,6 +21,7 @@ namespace ConsoleUI
         private byte DoubleBorderTopLeft = 201;
         private byte DoubleBorderTopRight = 187;
         private byte DoubleBorderVertical = 186;
+        private bool hasFocus;
         private int height;
         private int left;
         private IControlContainer owner;
@@ -30,6 +33,8 @@ namespace ConsoleUI
         private byte SingleBorderTopRight = 191;
         private byte SingleBorderVertical = 179;
 
+        private int tabOrder;
+        private bool tabStop;
         private string text;
         private TextAlign textAlign;
         private int top;
@@ -54,10 +59,18 @@ namespace ConsoleUI
 
         public event CancelEventHandler BeforePaint;
 
+        public event EventHandler Enter;
+
+        public event EventHandler EscPressed;
+
+        public event EventHandler Leave;
+
         /// <summary>
         /// Multicast event for property change notifications.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public event EventHandler<TabEventArgs> TabPressed;
 
         public BorderStyle BorderStyle
         {
@@ -95,6 +108,18 @@ namespace ConsoleUI
             get
             {
                 return ClientLeft + ClientWidth - 1;
+            }
+        }
+
+        public bool HasFocus
+        {
+            get
+            {
+                return hasFocus;
+            }
+            set
+            {
+                SetProperty(ref hasFocus, value);
             }
         }
 
@@ -139,6 +164,30 @@ namespace ConsoleUI
             get
             {
                 return Left + Width - 1;
+            }
+        }
+
+        public int TabOrder
+        {
+            get
+            {
+                return tabOrder;
+            }
+            set
+            {
+                SetProperty(ref tabOrder, value);
+            }
+        }
+
+        public bool TabStop
+        {
+            get
+            {
+                return tabStop;
+            }
+            set
+            {
+                SetProperty(ref tabStop, value);
             }
         }
 
@@ -265,7 +314,7 @@ namespace ConsoleUI
             }
         }
 
-        public void Draw()
+        public virtual void Draw()
         {
             if (!ShouldDraw)
                 return;
@@ -274,6 +323,16 @@ namespace ConsoleUI
             DrawBorder();
             DrawControl();
             DrawShadow();
+        }
+
+        public void Focus()
+        {
+            if (!TabStop)
+                return;
+
+            HasFocus = true;
+
+            OnEnter();
         }
 
         public void Hide()
@@ -294,6 +353,16 @@ namespace ConsoleUI
         public void SuspendLayout()
         {
             LayoutSuspended = true;
+        }
+
+        protected virtual void Blur()
+        {
+            if (!TabStop)
+                return;
+
+            HasFocus = false;
+
+            OnLeave();
         }
 
         protected virtual void DrawBackground()
@@ -397,6 +466,24 @@ namespace ConsoleUI
                 BeforePaint(this, args);
         }
 
+        protected virtual void OnEnter()
+        {
+            if (Enter != null)
+                Enter(this, new EventArgs());
+        }
+
+        protected virtual void OnEscPressed()
+        {
+            if (EscPressed != null)
+                EscPressed(this, new EventArgs());
+        }
+
+        protected virtual void OnLeave()
+        {
+            if (Leave != null)
+                Leave(this, new EventArgs());
+        }
+
         /// <summary>
         ///     Notifies listeners that a property value has changed.
         /// </summary>
@@ -413,6 +500,12 @@ namespace ConsoleUI
                 return;
 
             eventHandler(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected virtual void OnTabPressed(bool shift)
+        {
+            if (TabPressed != null)
+                TabPressed(this, new TabEventArgs(shift));
         }
 
         protected virtual string OnTruncateText(string text)
@@ -449,6 +542,10 @@ namespace ConsoleUI
             NativeMethods.Paint(Left, Top, height, width, Owner.Buffer);
 
             OnAfterPaint();
+        }
+
+        protected virtual void ReadKey()
+        {
         }
 
         /// <summary>
@@ -521,7 +618,7 @@ namespace ConsoleUI
                     }
             }
 
-            OnWrite(X + ClientLeft, Y + ClientTop, text, ForegroundColor, BackgroundColor);
+            OnWrite(X + ClientLeft, Y + ClientTop, text, HasFocus ? FocusForegroundColor : ForegroundColor, HasFocus ? FocusBackgroundColor : BackgroundColor);
         }
 
         private void DrawDoubleBorder()
