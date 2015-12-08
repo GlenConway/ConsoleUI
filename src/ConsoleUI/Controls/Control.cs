@@ -26,6 +26,7 @@ namespace ConsoleUI
         private int left;
         private IControlContainer owner;
 
+        private Buffer preserved;
         private byte SingleBorderBottomLeft = 192;
         private byte SingleBorderBottomRight = 217;
         private byte SingleBorderHorizontal = 196;
@@ -103,11 +104,43 @@ namespace ConsoleUI
             }
         }
 
+        public int ClientHeight
+        {
+            get
+            {
+                return Height - (Offset * 2);
+            }
+        }
+
+        public int ClientLeft
+        {
+            get
+            {
+                return Left + Offset;
+            }
+        }
+
         public int ClientRight
         {
             get
             {
                 return ClientLeft + ClientWidth - 1;
+            }
+        }
+
+        public int ClientTop
+        {
+            get
+            {
+                return Top + Offset;
+            }
+        }
+
+        public virtual int ClientWidth
+        {
+            get
+            {
+                return Width - (Offset * 2);
             }
         }
 
@@ -179,7 +212,7 @@ namespace ConsoleUI
             }
         }
 
-        public bool TabStop
+        public virtual bool TabStop
         {
             get
             {
@@ -248,38 +281,6 @@ namespace ConsoleUI
             set
             {
                 SetProperty(ref width, value);
-            }
-        }
-
-        protected int ClientHeight
-        {
-            get
-            {
-                return Height - (Offset * 2);
-            }
-        }
-
-        protected int ClientLeft
-        {
-            get
-            {
-                return Left + Offset;
-            }
-        }
-
-        protected int ClientTop
-        {
-            get
-            {
-                return Top + Offset;
-            }
-        }
-
-        protected virtual int ClientWidth
-        {
-            get
-            {
-                return Width - (Offset * 2);
             }
         }
 
@@ -353,6 +354,67 @@ namespace ConsoleUI
         public void SuspendLayout()
         {
             LayoutSuspended = true;
+        }
+
+        internal virtual void Paint()
+        {
+            if (!ShouldDraw)
+                return;
+
+            var args = new CancelEventArgs();
+
+            OnBeforePaint(args);
+
+            if (args.Cancel)
+                return;
+
+            var width = HasShadow ? Width + 1 : Width;
+            var height = HasShadow ? Height + 1 : Height;
+
+            NativeMethods.Paint(Left, Top, height, width, Owner.Buffer);
+
+            OnAfterPaint();
+        }
+
+        internal void PreserveArea(int left, int top, int height, int width)
+        {
+            if (Owner == null)
+                return;
+
+            preserved = new Buffer(left, top, height, width);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    var sourceIndex = ((top + y) * Owner.Buffer.Width) + (left + x);
+                    var targetIndex = (y * width) + x;
+
+                    preserved.Value[targetIndex] = Owner.Buffer.Value[sourceIndex];
+                }
+            }
+        }
+
+        internal void RestoreArea()
+        {
+            if (Owner == null)
+                return;
+
+            if (preserved == null)
+                return;
+
+            for (int y = 0; y < preserved.Height; y++)
+            {
+                for (int x = 0; x < preserved.Width; x++)
+                {
+                    var targetIndex = ((preserved.Top + y) * Owner.Buffer.Width) + (preserved.Left + x);
+                    var sourceIndex = (y * preserved.Width) + x;
+
+                    Owner.Buffer.Value[targetIndex] = preserved.Value[sourceIndex];
+                }
+            }
+
+            NativeMethods.Paint(preserved.Left, preserved.Top, preserved.Height, preserved.Width, Owner.Buffer);
         }
 
         protected virtual void Blur()
@@ -522,26 +584,6 @@ namespace ConsoleUI
                 return;
 
             Owner.Buffer.Write((short)x, (short)y, text, foregroundColor, backgroundColor);
-        }
-
-        protected virtual void Paint()
-        {
-            if (!ShouldDraw)
-                return;
-
-            var args = new CancelEventArgs();
-
-            OnBeforePaint(args);
-
-            if (args.Cancel)
-                return;
-
-            var width = HasShadow ? Width + 1 : Width;
-            var height = HasShadow ? Height + 1 : Height;
-
-            NativeMethods.Paint(Left, Top, height, width, Owner.Buffer);
-
-            OnAfterPaint();
         }
 
         protected virtual void ReadKey()

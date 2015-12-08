@@ -9,6 +9,7 @@ namespace ConsoleApplication1
 
         static void Main(string[] args)
         {
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
             Console.WindowHeight = 40;
             Console.WindowWidth = 132;
             Console.BufferHeight = Console.WindowHeight;
@@ -19,7 +20,7 @@ namespace ConsoleApplication1
             //Labels.SetupLabelScreens(screens);
             //TextBoxes.SetupTextBoxScreens(screens);
             //ListBoxes.SetupListBoxScreens(screens);
-            //KeyPressedEvents.SetupKeyPressedEventScreens(screens);
+            KeyPressedEvents.SetupKeyPressedEventScreens(screens);
             //ProgressBars.SetupProgressBars(screens);
             //LoginScreen.SetupLoginScreen(screens);
             //LoadingScreen.SetupLoadingScreen(screens);

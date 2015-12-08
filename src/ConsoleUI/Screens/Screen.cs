@@ -5,10 +5,10 @@ namespace ConsoleUI
 {
     public class Screen : IControlContainer
     {
-        public ConsoleColor BackgroundColor = ConsoleColor.Gray;
-        public ConsoleColor ForegroundColor = ConsoleColor.DarkGray;
+        public ConsoleColor BackgroundColor = ConsoleColor.Blue;
+        public ConsoleColor ForegroundColor = ConsoleColor.Gray;
         private readonly Buffer buffer;
-        private readonly ControlCollection controls;
+        private readonly ControlCollection<Control> controls;
         private readonly int height;
         private readonly int width;
         private Label footer;
@@ -34,7 +34,7 @@ namespace ConsoleUI
 
             Clear();
 
-            controls = new ControlCollection(this);
+            controls = new ControlCollection<Control>(this);
         }
 
         public event EventHandler AfterPaint;
@@ -51,7 +51,7 @@ namespace ConsoleUI
             }
         }
 
-        public ControlCollection Controls
+        public ControlCollection<Control> Controls
         {
             get
             {
@@ -152,6 +152,14 @@ namespace ConsoleUI
             OnAfterPaint();
         }
 
+        public void ResumeLayout()
+        {
+            foreach (var control in Controls)
+                control.ResumeLayout();
+
+            Footer.ResumeLayout();
+        }
+
         public virtual void Show()
         {
             ResumeLayout();
@@ -168,6 +176,14 @@ namespace ConsoleUI
             OnShown();
 
             Controls.SetFocus();
+        }
+
+        public void SuspendLayout()
+        {
+            foreach (var control in Controls)
+                control.SuspendLayout();
+
+            Footer.SuspendLayout();
         }
 
         internal void Show(InputControl focus)
@@ -214,22 +230,6 @@ namespace ConsoleUI
 
             if (Shown != null)
                 Shown(this, new EventArgs());
-        }
-
-        public void SuspendLayout()
-        {
-            foreach (var control in Controls)
-                control.SuspendLayout();
-
-            Footer.SuspendLayout();
-        }
-
-        public void ResumeLayout()
-        {
-            foreach (var control in Controls)
-                control.ResumeLayout();
-
-            Footer.ResumeLayout();
         }
     }
 }

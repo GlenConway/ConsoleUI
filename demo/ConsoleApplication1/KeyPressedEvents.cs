@@ -13,12 +13,14 @@ namespace ConsoleApplication1
         {
             var screen = new Screen("List Box Pop Up");
 
+            MenuBar menuBar = Menus.SetupMenuBar(screen);
+            
             var control1 = new ListBox();
 
             control1.Left = 0;
-            control1.Top = 0;
-            control1.Width = screen.Width; ;
-            control1.Height = screen.Height - 1;
+            control1.Top = 1;
+            control1.Width = screen.Width;
+            control1.Height = screen.Height - 2;
             control1.BorderStyle = BorderStyle.Double;
 
             for (int i = 0; i < 150; i++)
@@ -43,6 +45,8 @@ namespace ConsoleApplication1
             screen.Controls.Add(textBox);
 
             screen.Footer.Text = screen.Name + ". Press C to popup a text box, enter or escape.";
+
+            screen.Controls.Add(menuBar);
 
             screens.Add(screen);
 

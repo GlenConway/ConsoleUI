@@ -1,22 +1,36 @@
-﻿namespace ConsoleUI
+﻿using System;
+
+namespace ConsoleUI
 {
-    public class MenuBar : InputControl
+    public class MenuBar : Control
     {
-        private ControlCollection menus;
+        private ControlCollection<Menu> menus;
 
         public MenuBar(IControlContainer owner)
         {
             Owner = owner;
             Height = 1;
             TabStop = true;
+
+            FocusBackgroundColor = ConsoleColor.Black;
+            FocusForegroundColor = ConsoleColor.Gray;
+            ForegroundColor = ConsoleColor.Black;
+            BackgroundColor = ConsoleColor.Gray;
         }
 
-        public ControlCollection Menus
+        public ControlCollection<Menu> Menus
         {
             get
             {
                 if (menus == null)
-                    menus = new ControlCollection(Owner);
+                {
+                    menus = new ControlCollection<Menu>(Owner);
+
+                    menus.EscPressed += (s, e) =>
+                    {
+                        OnTabPressed(false);
+                    };
+                }
 
                 return menus;
             }
@@ -24,7 +38,6 @@
 
         public override void Draw()
         {
-
             if (!ShouldDraw)
                 return;
 
@@ -52,6 +65,15 @@
             Owner.Paint();
         }
 
-        
+        protected override void OnEnter()
+        {
+            Console.CursorVisible = false;
+
+            base.OnEnter();
+
+            DrawControl();
+
+            Menus.SetFocus();
+        }
     }
 }

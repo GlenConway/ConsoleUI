@@ -1,20 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ConsoleUI
 {
-    public class ControlCollection : ICollection<Control>
+    public class ControlCollection<T> : ICollection<T> where T : Control
     {
         private readonly IControlContainer owner;
         private bool exit;
-        private IList<Control> list = new List<Control>();
+        private IList<T> list = new List<T>();
         private int tabOrder = 0;
 
         public ControlCollection(IControlContainer owner)
         {
             this.owner = owner;
         }
+
+        public event EventHandler EscPressed;
 
         public int Count
         {
@@ -32,7 +35,7 @@ namespace ConsoleUI
             }
         }
 
-        public void Add(params Control[] items)
+        public void Add(params T[] items)
         {
             foreach (var item in items)
             {
@@ -40,7 +43,7 @@ namespace ConsoleUI
             }
         }
 
-        public void Add(Control item)
+        public void Add(T item)
         {
             item.Owner = owner;
 
@@ -68,6 +71,11 @@ namespace ConsoleUI
                         tabOrder = control.TabOrder;
                 }
             };
+
+            item.EscPressed += (s, e) =>
+            {
+                OnEscPressed(s, e);
+            };
         }
 
         public void Clear()
@@ -75,17 +83,17 @@ namespace ConsoleUI
             list.Clear();
         }
 
-        public bool Contains(Control item)
+        public bool Contains(T item)
         {
             return list.Contains(item);
         }
 
-        public void CopyTo(Control[] array, int arrayIndex)
+        public void CopyTo(T[] array, int arrayIndex)
         {
             list.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<Control> GetEnumerator()
+        public IEnumerator<T> GetEnumerator()
         {
             return list.GetEnumerator();
         }
@@ -100,7 +108,7 @@ namespace ConsoleUI
             return list.GetEnumerator();
         }
 
-        public bool Remove(Control item)
+        public bool Remove(T item)
         {
             return list.Remove(item);
         }
@@ -109,6 +117,11 @@ namespace ConsoleUI
         {
             exit = true;
 
+            RemoveFocus();
+        }
+
+        internal void RemoveFocus()
+        {
             foreach (var item in list.Where(p => p.HasFocus))
             {
                 item.HasFocus = false;
@@ -130,7 +143,7 @@ namespace ConsoleUI
             control.Focus();
         }
 
-        internal void SetFocus(InputControl control)
+        internal void SetFocus(T control)
         {
             if (exit)
                 return;
@@ -138,12 +151,7 @@ namespace ConsoleUI
             control.Focus();
         }
 
-        private Control LastControl()
-        {
-            return list.OrderBy(p => p.TabOrder).Where(p => p.Visible).LastOrDefault();
-        }
-
-        private void TabToNextControl(bool shift)
+        internal void TabToNextControl(bool shift)
         {
             if (exit)
                 return;
@@ -159,7 +167,14 @@ namespace ConsoleUI
             var lastTabOrder = last.TabOrder;
 
             if (shift && tabOrder > 0)
-                tabOrder--;
+            {
+                var previous = list.Where(p => p.TabStop).Where(p => p.Visible).Where(p => p.TabOrder < tabOrder).OrderByDescending(p => p.TabOrder).FirstOrDefault();
+
+                if (previous != null)
+                    tabOrder = previous.TabOrder;
+                else
+                    tabOrder = last.TabOrder;
+            }
             else
             if (tabOrder < lastTabOrder)
                 tabOrder++;
@@ -167,6 +182,19 @@ namespace ConsoleUI
                 tabOrder = 0;
 
             SetFocus();
+        }
+
+        protected virtual void OnEscPressed(object sender, EventArgs e)
+        {
+            tabOrder = 0;
+
+            if (EscPressed != null)
+                EscPressed(sender, e);
+        }
+
+        private T LastControl()
+        {
+            return list.OrderBy(p => p.TabOrder).Where(p => p.Visible).LastOrDefault();
         }
     }
 }
