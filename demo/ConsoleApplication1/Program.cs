@@ -20,10 +20,10 @@ namespace ConsoleApplication1
             //Labels.SetupLabelScreens(screens);
             //TextBoxes.SetupTextBoxScreens(screens);
             //ListBoxes.SetupListBoxScreens(screens);
-            KeyPressedEvents.SetupKeyPressedEventScreens(screens);
+            //KeyPressedEvents.SetupKeyPressedEventScreens(screens);
             //ProgressBars.SetupProgressBars(screens);
-            //LoginScreen.SetupLoginScreen(screens);
-            //LoadingScreen.SetupLoadingScreen(screens);
+            LoginScreen.SetupLoginScreen(screens);
+            LoadingScreen.SetupLoadingScreen(screens);
             Menus.SetupMenu(screens);
 
             ShowScreens();

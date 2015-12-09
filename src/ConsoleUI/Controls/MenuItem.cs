@@ -1,4 +1,6 @@
-﻿namespace ConsoleUI
+﻿using System;
+
+namespace ConsoleUI
 {
     public class MenuItem : Control
     {
@@ -10,9 +12,11 @@
             Height = 1;
             TabStop = true;
 
-            FocusBackgroundColor = System.ConsoleColor.Red;
-            FocusForegroundColor = System.ConsoleColor.White;
+            FocusBackgroundColor = ConsoleColor.Red;
+            FocusForegroundColor = ConsoleColor.White;
         }
+
+        public event EventHandler Selected;
 
         public bool IsSeparator
         {
@@ -41,6 +45,17 @@
                 if (!IsSeparator)
                     base.TabStop = value;
             }
+        }
+
+        internal void Select()
+        {
+            OnSelected();
+        }
+
+        protected virtual void OnSelected()
+        {
+            if (Selected != null)
+                Selected(this, new EventArgs());
         }
     }
 }

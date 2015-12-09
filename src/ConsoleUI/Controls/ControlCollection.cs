@@ -98,7 +98,7 @@ namespace ConsoleUI
             return list.GetEnumerator();
         }
 
-        public Control HasFocus()
+        public T GetHasFocus()
         {
             return list.Where(p => p.HasFocus).LastOrDefault();
         }

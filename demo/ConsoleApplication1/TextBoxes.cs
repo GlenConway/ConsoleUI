@@ -16,7 +16,7 @@ namespace ConsoleApplication1
         private static void BasicTextBoxScreen(ScreenCollection screens)
         {
             var screen = new Screen("Basic Text Boxes");
-
+            
             var control1 = new TextBox();
 
             control1.Left = 10;

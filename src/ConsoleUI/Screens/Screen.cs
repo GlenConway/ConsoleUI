@@ -5,8 +5,8 @@ namespace ConsoleUI
 {
     public class Screen : IControlContainer
     {
-        public ConsoleColor BackgroundColor = ConsoleColor.Blue;
-        public ConsoleColor ForegroundColor = ConsoleColor.Gray;
+        public ConsoleColor BackgroundColor = ConsoleColor.Gray;
+        public ConsoleColor ForegroundColor = ConsoleColor.DarkGray;
         private readonly Buffer buffer;
         private readonly ControlCollection<Control> controls;
         private readonly int height;
@@ -158,6 +158,13 @@ namespace ConsoleUI
                 control.ResumeLayout();
 
             Footer.ResumeLayout();
+        }
+
+        public void SetFooterText(string text)
+        {
+            Footer.Text = text;
+            footer.Draw();
+            footer.Paint();
         }
 
         public virtual void Show()

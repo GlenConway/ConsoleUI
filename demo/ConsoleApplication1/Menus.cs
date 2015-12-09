@@ -33,10 +33,10 @@ namespace ConsoleApplication1
             var menu = new Menu(screen);
             menu.Text = "Edit";
 
-            menu.AddMenuItem("Cut");
-            menu.AddMenuItem("Copy");
+            AddMenuItem(menu, "Cut");
+            AddMenuItem(menu, "Copy");
             menu.AddSeparator();
-            menu.AddMenuItem("Paste");
+            AddMenuItem(menu, "Paste");
 
             menuBar.Menus.Add(menu);
         }
@@ -46,14 +46,29 @@ namespace ConsoleApplication1
             var menu = new Menu(screen);
             menu.Text = "File";
 
-            menu.AddMenuItem("New");
-            menu.AddMenuItem("Open");
+            AddMenuItem(menu, "New");
+            AddMenuItem(menu, "Open");
             menu.AddSeparator();
-            menu.AddMenuItem("Save");
+            AddMenuItem(menu, "Save");
             menu.AddSeparator();
-            menu.AddMenuItem("Close");
+            AddMenuItem(menu, "Close");
 
             menuBar.Menus.Add(menu);
+        }
+
+        private static void AddMenuItem(Menu menu, string text)
+        {
+            var menuItem = menu.AddMenuItem(text);
+
+            menuItem.Selected += (s, e) =>
+            {
+                ((Screen)menu.Owner).SetFooterText("Selected: " + ((MenuItem)s).Text);
+            };
+
+            menuItem.Enter += (s, e) =>
+            {
+                ((Screen)menu.Owner).SetFooterText("Enter: " + ((MenuItem)s).Text);
+            };
         }
 
         private static void SetupViewMenu(Screen screen, MenuBar menuBar)
@@ -61,14 +76,14 @@ namespace ConsoleApplication1
             var menu = new Menu(screen);
             menu.Text = "View";
 
-            menu.AddMenuItem("Dog");
-            menu.AddMenuItem("Cat");
+            AddMenuItem(menu, "Dog");
+            AddMenuItem(menu, "Cat");
             menu.AddSeparator();
-            menu.AddMenuItem("Mouse");
+            AddMenuItem(menu, "Mouse");
             menu.AddSeparator();
-            menu.AddMenuItem("Monkey");
+            AddMenuItem(menu, "Monkey");
             menu.AddSeparator();
-            menu.AddMenuItem("Horse");
+            AddMenuItem(menu, "Horse");
 
             menuBar.Menus.Add(menu);
         }

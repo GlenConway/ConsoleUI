@@ -133,6 +133,21 @@ namespace ConsoleUI
 
                 switch (info.Key)
                 {
+                    case ConsoleKey.Enter:
+                        {
+                            if (menuItemsHasFocus)
+                            {
+                                MenuItems.GetHasFocus().Select();
+
+                                Blur();
+
+                                OnEscPressed();
+
+                                return;
+                            }
+
+                            break;
+                        }
                     case ConsoleKey.Escape:
                         {
                             Blur();
@@ -143,11 +158,22 @@ namespace ConsoleUI
                         }
                     case ConsoleKey.Tab:
                         {
-                            Blur();
+                            if (menuItemsHasFocus)
+                            {
+                                MenuItems.TabToNextControl(info.Modifiers.HasFlag(ConsoleModifiers.Shift));
 
-                            OnTabPressed(info.Modifiers.HasFlag(ConsoleModifiers.Shift));
+                                DrawMenuItems();
 
-                            return;
+                                break;
+                            }
+                            else
+                            {
+                                Blur();
+
+                                OnTabPressed(info.Modifiers.HasFlag(ConsoleModifiers.Shift));
+
+                                return;
+                            }
                         }
                     case ConsoleKey.RightArrow:
                         {
