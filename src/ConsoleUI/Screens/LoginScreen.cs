@@ -105,7 +105,7 @@ namespace ConsoleUI
             OnCancel();
         }
 
-        private void LoginButton_Click(object sender, EventArgs e)
+        private void DoLogin()
         {
             if (!string.IsNullOrWhiteSpace(usernameTextBox.Text))
             {
@@ -134,11 +134,16 @@ namespace ConsoleUI
             passwordTextBox.Focus();
         }
 
+        private void LoginButton_Click(object sender, EventArgs e)
+        {
+            DoLogin();
+        }
+
         private void PasswordTextBox_KeyPressed(object sender, KeyPressedEventArgs e)
         {
             if (e.Info.Key == ConsoleKey.Enter)
             {
-                LoginButton_Click(sender, new EventArgs());
+                DoLogin();
                 e.Handled = true;
             }
         }

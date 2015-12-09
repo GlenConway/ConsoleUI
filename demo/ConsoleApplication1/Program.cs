@@ -17,11 +17,11 @@ namespace ConsoleApplication1
 
             Utils.SetWindowPosition(0, 0);
 
-            //Labels.SetupLabelScreens(screens);
-            //TextBoxes.SetupTextBoxScreens(screens);
-            //ListBoxes.SetupListBoxScreens(screens);
-            //KeyPressedEvents.SetupKeyPressedEventScreens(screens);
-            //ProgressBars.SetupProgressBars(screens);
+            Labels.SetupLabelScreens(screens);
+            TextBoxes.SetupTextBoxScreens(screens);
+            ListBoxes.SetupListBoxScreens(screens);
+            KeyPressedEvents.SetupKeyPressedEventScreens(screens);
+            ProgressBars.SetupProgressBars(screens);
             LoginScreen.SetupLoginScreen(screens);
             LoadingScreen.SetupLoadingScreen(screens);
             Menus.SetupMenu(screens);
