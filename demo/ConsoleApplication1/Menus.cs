@@ -74,8 +74,8 @@ namespace ConsoleApplication1
         private static void SetupViewMenu(Screen screen, MenuBar menuBar)
         {
             var menu = new Menu(screen);
-            menu.Text = "View";
-
+            menu.Text = "Animals";
+            
             AddMenuItem(menu, "Dog");
             AddMenuItem(menu, "Cat");
             menu.AddSeparator();
@@ -84,6 +84,8 @@ namespace ConsoleApplication1
             AddMenuItem(menu, "Monkey");
             menu.AddSeparator();
             AddMenuItem(menu, "Horse");
+            menu.AddSeparator();
+            AddMenuItem(menu, "Hummingbird hawk-moth");
 
             menuBar.Menus.Add(menu);
         }

@@ -6,10 +6,10 @@ namespace ConsoleUI
     public class Menu : Control
     {
         private ControlCollection<MenuItem> menuItems;
+        private bool menuItemsHasFocus;
         private Rectangle rectangle;
 
         private bool showMenuItems;
-        private bool menuItemsHasFocus;
 
         public Menu(IControlContainer owner)
         {
@@ -37,6 +37,26 @@ namespace ConsoleUI
             }
         }
 
+        public MenuItem AddMenuItem(string text)
+        {
+            var item = new MenuItem(Owner);
+            item.Text = text;
+
+            MenuItems.Add(item);
+
+            return item;
+        }
+
+        public MenuItem AddSeparator()
+        {
+            var item = new MenuItem(Owner);
+            item.IsSeparator = true;
+
+            MenuItems.Add(item);
+
+            return item;
+        }
+
         protected override void DrawBackground()
         {
             base.DrawBackground();
@@ -47,12 +67,21 @@ namespace ConsoleUI
             if (MenuItems.Count == 0)
                 return;
 
+            // get the maximum length of menu items text
+            var maxLength = MenuItems.Where(p => !p.IsSeparator).Where(p => !string.IsNullOrEmpty(p.Text)).Max(p => p.Text.Length);
+
+            // add two characters for borders
+            maxLength += 2;
+
+            // menu must be at least 15 characters wide
+            var width = Math.Max(15,  maxLength);
+
             rectangle.SuspendLayout();
 
             rectangle.Left = Left;
             rectangle.Top = Top + 1;
             rectangle.Height = MenuItems.Count + 2;
-            rectangle.Width = Math.Max(20, Math.Max(Width, MenuItems.Max(p => p.Width)));
+            rectangle.Width = width;
             rectangle.HasShadow = true;
             rectangle.BorderStyle = BorderStyle.Single;
 
@@ -62,38 +91,6 @@ namespace ConsoleUI
             rectangle.Draw();
 
             DrawMenuItems();
-        }
-
-        private void DrawMenuItems()
-        {
-            var y = rectangle.ClientTop;
-            var x = rectangle.ClientLeft;
-            var width = rectangle.ClientWidth;
-
-            foreach (var item in MenuItems)
-            {
-                item.SuspendLayout();
-                item.Top = y;
-                item.Left = x;
-                item.Width = width;
-                item.ResumeLayout();
-                item.Draw();
-
-                if (item.IsSeparator)
-                {
-                    Owner.Buffer.Write((short)rectangle.Left, (short)y, 195, item.ForegroundColor, item.BackgroundColor);
-                    Owner.Buffer.Write((short)rectangle.Right, (short)y, 180, item.ForegroundColor, item.BackgroundColor);
-
-                    for (int i = 1; i < rectangle.Width - 1; i++)
-                    {
-                        Owner.Buffer.Write((short)rectangle.Left + i, (short)y, 196, item.ForegroundColor, item.BackgroundColor);
-                    }
-                }
-
-                y++;
-            }
-
-            rectangle.Paint();
         }
 
         protected override void OnEnter()
@@ -221,24 +218,36 @@ namespace ConsoleUI
             }
         }
 
-        public MenuItem AddMenuItem(string text)
+        private void DrawMenuItems()
         {
-            var item = new MenuItem(Owner);
-            item.Text = text;
+            var y = rectangle.ClientTop;
+            var x = rectangle.ClientLeft;
+            var width = rectangle.ClientWidth;
 
-            MenuItems.Add(item);
+            foreach (var item in MenuItems)
+            {
+                item.SuspendLayout();
+                item.Top = y;
+                item.Left = x;
+                item.Width = width;
+                item.ResumeLayout();
+                item.Draw();
 
-            return item;
-        }
+                if (item.IsSeparator)
+                {
+                    Owner.Buffer.Write((short)rectangle.Left, (short)y, 195, item.ForegroundColor, item.BackgroundColor);
+                    Owner.Buffer.Write((short)rectangle.Right, (short)y, 180, item.ForegroundColor, item.BackgroundColor);
 
-        public MenuItem AddSeparator()
-        {
-            var item = new MenuItem(Owner);
-            item.IsSeparator = true;
+                    for (int i = 1; i < rectangle.Width - 1; i++)
+                    {
+                        Owner.Buffer.Write((short)rectangle.Left + i, (short)y, 196, item.ForegroundColor, item.BackgroundColor);
+                    }
+                }
 
-            MenuItems.Add(item);
+                y++;
+            }
 
-            return item;
+            rectangle.Paint();
         }
     }
 }
