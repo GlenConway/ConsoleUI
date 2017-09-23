@@ -4,7 +4,7 @@ A little library to provide UI components in Windows Console Applications a la D
 [![Nuget](https://img.shields.io/nuget/dt/consoleUI.svg)](http://nuget.org/packages/consoleUI)
 [![Nuget](https://img.shields.io/nuget/v/consoleUI.svg)](http://nuget.org/packages/consoleUI)
 
-##Controls
+## Controls
 
   * Label
   * TextBox
@@ -13,30 +13,30 @@ A little library to provide UI components in Windows Console Applications a la D
   * ProgressBar
   * Rectangle
 
-##Features
+## Features
 
   * None, Single or Double border
   * Shadow
   * Login Screen
   * Loading Screen
 
-###Loading Screen
+### Loading Screen
 ![Docs](https://raw.githubusercontent.com/GlenConway/ConsoleUI/master/docs/images/loading-screen.png)
 
-###Login Screen
+### Login Screen
 ![Docs](https://raw.githubusercontent.com/GlenConway/ConsoleUI/master/docs/images/login-screen-1.png)
 ![Docs](https://raw.githubusercontent.com/GlenConway/ConsoleUI/master/docs/images/login-screen-2.png)
 ![Docs](https://raw.githubusercontent.com/GlenConway/ConsoleUI/master/docs/images/login-screen-3.png)
 
-##Controls (To-Do)
+## Controls (To-Do)
 
   * Multi-line TextBox
   * Menus
   * CheckBox
   * Radio Button
 
-##Some Code
-###Using Built In Screens
+## Some Code
+### Using Built In Screens
 ``` C#
 using System;
 using System.Linq;
@@ -81,7 +81,7 @@ namespace ConsoleApplication1
     }
 }
 ```
-####Using the controls
+#### Using the controls
 ```C#
 using ConsoleUI;
 
